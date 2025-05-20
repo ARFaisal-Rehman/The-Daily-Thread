@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wardrobe - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}" class="active">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>My Wardrobe</h2>
+
+            <section class="section-box">
+                <h3>Add New Item</h3>
+    <form method="POST">
+        <div>
+            <label for="item_name">Item Name:</label>
+            <input type="text" id="item_name" name="item_name" required>
+        </div>
+        <div>
+            <label for="item_type">Item Type:</label>
+            <select id="item_type" name="item_type" required>
+                <option value="">Select type...</option>
+                <option value="shirt">Shirt</option>
+                <option value="pants">Pants</option>
+                <option value="jacket">Jacket</option>
+                <option value="shoes">Shoes</option>
+                <option value="accessory">Accessory</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div>
+            <label for="color">Color:</label>
+            <input type="text" id="color" name="color">
+        </div>
+        <div>
+            <label for="brand">Brand:</label>
+            <input type="text" id="brand" name="brand">
+        </div>
+        <div>
+            <label for="purchase_date">Purchase Date:</label>
+            <input type="date" id="purchase_date" name="purchase_date">
+        </div>
+        <button type="submit">Add Item</button>
+    </form>
+            </section>
+
+            <section class="section-box">
+                <h3>Your Wardrobe Items</h3>
+    {% if wardrobe_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Type</th>
+                    <th>Color</th>
+                    <th>Brand</th>
+                    <th>Purchased</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in wardrobe_items %}
+                <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.item_type }}</td>
+                    <td>{{ item.color or 'N/A' }}</td>
+                    <td>{{ item.brand or 'N/A' }}</td>
+                    <td>{{ item.purchase_date or 'N/A' }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('delete_wardrobe_item', item_id=item.id) }}" style="display: inline;">
+                            <button type="submit" class="button-small">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Your wardrobe is empty. Add some items!</p>
+    {% endif %}
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

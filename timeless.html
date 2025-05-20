@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeless Fashion - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+    <style>
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        .filter-section label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .filter-section select, .filter-section button {
+            padding: 8px;
+            margin-right: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .item-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        .item-card h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        .item-details span {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .item-details .season-icon {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}" class="active">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>Timeless Fashion: Enduring Style</h2>
+
+            <section class="section-box">
+                <h3>What is Timeless Fashion?</h3>
+                <p>Timeless fashion refers to pieces of clothing and accessories that remain stylish and relevant regardless of fleeting trends. These are often classic, well-made items characterized by their simplicity, versatility, and enduring appeal. Investing in timeless fashion is important because it promotes sustainability by encouraging less consumption, offers better value over time, and provides a foundation for a versatile and sophisticated wardrobe.</p>
+            </section>
+
+            <section class="section-box filter-section">
+                <h3>Find Your Timeless Style</h3>
+                <form id="timelessFilterForm">
+                    <label for="genderFilter">Gender:</label>
+                    <select id="genderFilter" name="gender">
+                        <option value="all">All</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                    </select>
+
+                    <label for="vibeFilter">Vibe:</label>
+                    <select id="vibeFilter" name="vibe">
+                        <option value="all">All Vibes</option>
+                        <option value="minimal_classic">Minimal / Classic</option>
+                        <option value="romantic_feminine">Romantic / Feminine</option>
+                        <option value="edgy_streetwear">Edgy / Streetwear</option>
+                        <option value="natural_earthy">Natural / Earthy / Cottagecore</option>
+                    </select>
+
+                    <button type="button" onclick="applyFilters()">Find Items</button>
+                </form>
+            </section>
+
+            <section class="section-box">
+                <h3>Recommended Timeless Items</h3>
+                <div id="timelessItemsContainer">
+                    <!-- Items will be dynamically loaded here by JavaScript -->
+                    <p>Select filters to see recommendations.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const timelessItemsData = [
+            // Minimal / Classic - Women
+            { name: "White button-up blouse", gender: "female", vibe: "minimal_classic", season: "☀️🌦️❄️", description: "A crisp essential for any wardrobe." },
+            { name: "Black turtleneck", gender: "female", vibe: "minimal_classic", season: "❄️", description: "Chic and versatile for cooler weather." },
+            { name: "Trench coat (beige)", gender: "female", vibe: "minimal_classic", season: "🌦️❄️", description: "Iconic outerwear for transitional seasons." },
+            { name: "Little black dress (LBD)", gender: "female", vibe: "minimal_classic", season: "🌦️🌞", description: "The ultimate go-to for various occasions." },
+            { name: "Straight-leg trousers (neutral)", gender: "female", vibe: "minimal_classic", season: "🌞❄️", description: "Polished and comfortable for work or casual." },
+            { name: "Black ankle boots", gender: "female", vibe: "minimal_classic", season: "❄️🌦️", description: "A staple footwear choice." },
+            { name: "Structured leather handbag (black/tan)", gender: "female", vibe: "minimal_classic", season: "all-season", description: "Elegant and practical for everyday use." },
+            // Minimal / Classic - Men
+            { name: "White oxford shirt", gender: "male", vibe: "minimal_classic", season: "☀️🌦️❄️", description: "A cornerstone of a man's wardrobe." },
+            { name: "Crewneck sweater (navy or beige)", gender: "male", vibe: "minimal_classic", season: "❄️", description: "Classic knitwear for layering." },
+            { name: "Wool coat (camel or charcoal)", gender: "male", vibe: "minimal_classic", season: "❄️", description: "Sophisticated warmth for winter." },
+            { name: "Navy blazer", gender: "male", vibe: "minimal_classic", season: "🌦️", description: "Versatile for smart-casual looks." },
+            { name: "Chinos (navy or olive)", gender: "male", vibe: "minimal_classic", season: "🌦️☀️", description: "A comfortable and stylish alternative to jeans." },
+            { name: "Derby shoes", gender: "male", vibe: "minimal_classic", season: "🌦️❄️", description: "Classic dress shoes for various occasions." },
+            // Romantic / Feminine - Women
+            { name: "Wrap dress (DVF style)", gender: "female", vibe: "romantic_feminine", season: "🌞🌦️", description: "Flattering and feminine for many body types." },
+            { name: "Silk camisole", gender: "female", vibe: "romantic_feminine", season: "☀️🌦️", description: "Luxurious and versatile for layering or on its own." },
+            { name: "A-line midi skirt", gender: "female", vibe: "romantic_feminine", season: "🌦️☀️", description: "Elegant and timeless silhouette." },
+            { name: "Ballet flats", gender: "female", vibe: "romantic_feminine", season: "🌞🌦️", description: "Comfortable and chic footwear." },
+            { name: "Cashmere scarf (soft tone)", gender: "female", vibe: "romantic_feminine", season: "❄️", description: "Adds warmth and a touch of luxury." },
+            // Edgy / Streetwear - Women
+            { name: "Leather jacket", gender: "female", vibe: "edgy_streetwear", season: "🌦️❄️", description: "Adds an edge to any outfit." },
+            { name: "Straight-leg jeans (ripped or raw hem)", gender: "female", vibe: "edgy_streetwear", season: "all-season", description: "Casual and cool denim staple." },
+            { name: "Chelsea boots (black)", gender: "female", vibe: "edgy_streetwear", season: "❄️🌦️", description: "Sleek and versatile boots." },
+            { name: "Wayfarer sunglasses", gender: "female", vibe: "edgy_streetwear", season: "☀️", description: "Classic cool eyewear." },
+            // Edgy / Streetwear - Men
+            { name: "Leather jacket (black)", gender: "male", vibe: "edgy_streetwear", season: "❄️🌦️", description: "A rugged and stylish outerwear piece." },
+            { name: "Dark wash jeans", gender: "male", vibe: "edgy_streetwear", season: "all-season", description: "Versatile denim for a modern look." },
+            { name: "White T-shirt (high quality)", gender: "male", vibe: "edgy_streetwear", season: "☀️", description: "The foundation of many casual outfits." },
+            { name: "White sneakers (clean leather)", gender: "male", vibe: "edgy_streetwear", season: "☀️🌦️", description: "Sharp and comfortable footwear." },
+            { name: "Chelsea boots (suede)", gender: "male", vibe: "edgy_streetwear", season: "🌦️❄️", description: "Stylish boots for a refined edge." },
+            // Natural / Earthy / Cottagecore - Women
+            { name: "Wool cardigan or pullover", gender: "female", vibe: "natural_earthy", season: "❄️", description: "Cozy and warm knitwear." },
+            { name: "Midi skirt (cotton or linen)", gender: "female", vibe: "natural_earthy", season: "🌞", description: "Comfortable and breathable for warmer days." },
+            { name: "Tote bag (canvas or jute)", gender: "female", vibe: "natural_earthy", season: "☀️", description: "Practical and earthy carryall." },
+            { name: "Neutral tone loafers", gender: "female", vibe: "natural_earthy", season: "🌦️", description: "Comfortable and understated footwear." },
+            // Natural / Earthy / Cottagecore - Men
+            { name: "Wool peacoat", gender: "male", vibe: "natural_earthy", season: "❄️", description: "Classic, warm, and rugged coat." },
+            { name: "Earth-tone chinos", gender: "male", vibe: "natural_earthy", season: "all-season", description: "Versatile trousers in natural shades." },
+            { name: "Crewneck knit sweater", gender: "male", vibe: "natural_earthy", season: "❄️", description: "Comfortable and warm for layering." },
+            { name: "Desert boots (suede)", gender: "male", vibe: "natural_earthy", season: "🌦️", description: "Casual and comfortable ankle boots." }
+        ];
+
+        function applyFilters() {
+            const genderFilter = document.getElementById('genderFilter').value;
+            const vibeFilter = document.getElementById('vibeFilter').value;
+            const container = document.getElementById('timelessItemsContainer');
+            container.innerHTML = ''; // Clear previous items
+
+            const filteredItems = timelessItemsData.filter(item => {
+                const genderMatch = (genderFilter === 'all') || (item.gender === genderFilter);
+                const vibeMatch = (vibeFilter === 'all') || (item.vibe === vibeFilter);
+                return genderMatch && vibeMatch;
+            });
+
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<p>No items match your selected filters. Try broadening your search!</p>';
+                return;
+            }
+
+            filteredItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+                itemCard.innerHTML = `
+                    <h4>${item.name}</h4>
+                    <p>${item.description || ''}</p>
+                    <div class="item-details">
+                        <span><strong>Gender:</strong> ${item.gender.charAt(0).toUpperCase() + item.gender.slice(1)}</span>
+                        <span><strong>Vibe:</strong> ${item.vibe.replace(/_/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}</span>
+                        <span class="season-icon"><strong>Season:</strong> ${item.season}</span>
+                    </div>
+                `;
+                container.appendChild(itemCard);
+            });
+        }
+
+        // Optionally, load all items or a default set on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // applyFilters(); // Uncomment to load all items initially or based on default filter values
+            // Or display a message to prompt filter selection:
+            document.getElementById('timelessItemsContainer').innerHTML = '<p>Use the filters above to discover timeless fashion pieces!</p>';
+        });
+    </script>
+</body>
+</html>

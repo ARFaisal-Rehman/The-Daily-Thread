@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Trends - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .data-file-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        .data-file-card h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .table-responsive table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-responsive th, .table-responsive td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .table-responsive th {
+            background-color: #e9ecef;
+        }
+        .error-message {
+            color: red;
+            font-style: italic;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+            width: 100%;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            background: white;
+            min-width: 300px;
+            width: 100%;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+        .chart-container h4 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>Fashion Trends & Data Insights</h2>
+
+            <section class="section-box chart-section">
+                <h3>Trend Visualizations</h3>
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <h4>Current Shopping Trends (Category by Season)</h4>
+                        <canvas id="peopleBuyingChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>Brand Popularity Analysis (Brand by Year)</h4>
+                        <canvas id="brandTrendsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>Seasonal Color Trends (Color by Season)</h4>
+                        <canvas id="colorPalettesChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>Fashion Cycle Analysis (Style by Season)</h4>
+                        <canvas id="trendLifecycleChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>Geographic Style Distribution (Style by Country)</h4>
+                        <canvas id="regionalTrendsChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h4>Style Preference Analysis (Style by Age Group)</h4>
+                        <canvas id="stylePreferenceChart"></canvas> <!-- Renamed from moodFashionChart -->
+                    </div>
+                    <div class="chart-container">
+                        <h4>Optimal Purchase Periods (Purchase Time by Season)</h4>
+                        <canvas id="purchaseTimingChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-box external-trends-section">
+                <h3>External Trend Insights</h3>
+                
+                <div class="card data-file-card">
+                    <h4>Google Trends - Related Searches</h4>
+                    {% if google_trends_data and not google_trends_data.error %}
+                        {% if google_trends_data.related_queries %}
+                            <ul>
+                                {% for query in google_trends_data.related_queries %}
+                                    <li>{{ query[0] if query is iterable and query|length > 0 else query }}</li> {# Accessing the first element for series/list like structures #}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No related Google Trends searches found.</p>
+                        {% endif %}
+                    {% elif google_trends_data and google_trends_data.error %}
+                        <p class="error-message">Error fetching Google Trends: {{ google_trends_data.error }}</p>
+                    {% else %}
+                        <p>Google Trends data not available.</p>
+                    {% endif %}
+                </div>
+
+                <div class="card data-file-card">
+                    <h4>Reddit Fashion Discussions (r/fashion)</h4>
+                    {% if reddit_trends_data and not reddit_trends_data.error %}
+                        {% if reddit_trends_data.posts %}
+                            <ul>
+                                {% for post in reddit_trends_data.posts %}
+                                    <li><a href="{{ post.url }}" target="_blank">{{ post.title }}</a> (Score: {{ post.score }})</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No trending Reddit posts found.</p>
+                        {% endif %}
+                    {% elif reddit_trends_data and reddit_trends_data.error %}
+                        <p class="error-message">Error fetching Reddit Trends: {{ reddit_trends_data.error }}</p>
+                        <p><em>Note: Reddit integration requires API key setup in <code>app.py</code>. Placeholder data is shown.</em></p>
+                    {% else %}
+                        <p>Reddit trends data not available.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="section-box data-trends-section">
+                <h3>Data-Driven Trends from Your Files</h3>
+                {% if trends_data %}
+                    {% for data_item in trends_data %}
+                        <div class="card data-file-card">
+                            <h4>{{ data_item.file_name }}</h4>
+                            {% if data_item.error %}
+                                <p class="error-message">Error loading data: {{ data_item.error }}</p>
+                            {% else %}
+                                <p>Displaying top {{ data_item.displayed_rows }} rows (max {{ data_item.max_rows_limit }}) and first {{ data_item.columns | length }} columns of {{ data_item.total_rows }} total rows.</p>
+                                <div class="table-responsive">
+                                    {{ data_item.table_html | safe }}
+                                </div>
+                                {% if data_item.total_rows > data_item.max_rows_limit or data_item.columns | length < 5 %}
+                                    <p><em>Note: Data preview is limited for display purposes.</em></p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No trend data files found or processed.</p>
+                {% endif %}
+            </section>
+
+            <section class="section-box timeless-section">
+                <h3>Timeless Fashion Examples</h3>
+        <div class="card">
+            <h3>The Little Black Dress (LBD)</h3>
+            <p>A versatile classic for any occasion.</p>
+        </div>
+        <div class="card">
+            <h3>A Well-Fitted Blazer</h3>
+            <p>Adds polish to both casual and formal outfits.</p>
+        </div>
+        <div class="card">
+            <h3>Classic White Sneakers</h3>
+            <p>Comfortable and stylish, pairs with almost anything.</p>
+        </div>
+    </div>
+
+            </section>
+
+            <section class="section-box sustainability-section">
+                <h3>Sustainable Fashion & Trend Cycles</h3>
+        <div class="card">
+            <h3>Understanding Trend Cycles</h3>
+            <p>Fashion trends often reappear over time. Understanding this can help you make more sustainable choices by investing in quality pieces that may come back in style, or by recognizing fleeting micro-trends.</p>
+        </div>
+        <div class="card">
+            <h3>Tips for Sustainable Fashion</h3>
+            <ul>
+                <li><strong>Buy Less, Choose Well:</strong> Invest in high-quality, durable items.</li>
+                <li><strong>Care for Your Clothes:</strong> Proper washing and storage extends garment life.</li>
+                <li><strong>Repair and Repurpose:</strong> Mend clothes instead of discarding them. Get creative!</li>
+                <li><strong>Shop Secondhand:</strong> Thrifting is a great way to find unique items and reduce waste.</li>
+                <li><strong>Support Sustainable Brands:</strong> Look for brands committed to ethical and eco-friendly practices.</li>
+            </ul>
+        </div>
+    </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultChartConfig = {{ default_chart_config | tojson | safe }};
+
+            function getRandomColor() {
+                const r = Math.floor(Math.random() * 200); // Avoid too light colors
+                const g = Math.floor(Math.random() * 200);
+                const b = Math.floor(Math.random() * 200);
+                return `rgb(${r},${g},${b})`;
+            }
+
+            function createLineChart(canvasId, chartDataFromServer, chartTitle) {
+                const ctx = document.getElementById(canvasId)?.getContext('2d');
+                
+                // Use chartDataFromServer directly as it's already in Chart.js format
+                if (!ctx || !chartDataFromServer || 
+                    !chartDataFromServer.labels || chartDataFromServer.labels.length === 0 || 
+                    !chartDataFromServer.datasets || chartDataFromServer.datasets.length === 0 ||
+                    (chartDataFromServer.datasets && chartDataFromServer.datasets.every(ds => !ds.data || ds.data.length === 0))
+                ) {
+                    console.warn(`Chart data or canvas not found for ${canvasId}, or data is empty. Data:`, chartDataFromServer);
+                    const canvasElement = document.getElementById(canvasId);
+                    if (canvasElement && canvasElement.parentNode) {
+                        // Clear previous error messages if any
+                        const existingError = canvasElement.parentNode.querySelector('.chart-error-message');
+                        if (existingError) existingError.remove();
+
+                        const p = document.createElement('p');
+                        p.textContent = 'Data not available to render this chart.';
+                        p.className = 'chart-error-message'; // Add a class for potential styling
+                        p.style.textAlign = 'center';
+                        p.style.paddingTop = '20px';
+                        canvasElement.parentNode.insertBefore(p, canvasElement.nextSibling);
+                        // canvasElement.style.display = 'none'; // Optionally hide canvas
+                    }
+                    return null;
+                }
+
+                // Assign colors to datasets if not already present
+                chartDataFromServer.datasets.forEach(dataset => {
+                    if (!dataset.borderColor) {
+                        dataset.borderColor = getRandomColor();
+                    }
+                    // For line charts, backgroundColor is often for the area under the line if fill: true
+                    // If fill: false, it might not be visually used but can be set for consistency.
+                    if (!dataset.backgroundColor) { 
+                        dataset.backgroundColor = dataset.borderColor.replace('rgb(', 'rgba(').replace(')', ', 0.2)'); // Semi-transparent version for fill
+                    }
+                });
+
+                let config = JSON.parse(JSON.stringify(defaultChartConfig)); // Deep copy
+                config.data = chartDataFromServer; // Use the data directly
+                
+                // Ensure plugins object exists
+                config.options.plugins = config.options.plugins || {};
+                config.options.plugins.title = {
+                    display: true,
+                    text: chartTitle,
+                    font: { size: 16, weight: 'bold' },
+                    padding: { top: 10, bottom: 20 }
+                };
+                config.options.plugins.legend = {
+                    position: 'top',
+                    labels: { usePointStyle: true, boxWidth: 8, padding: 20 }
+                };
+                
+                // Optional: Add axis labels if you have them (not part of current Python output structure)
+                // if (chartDataFromServer.xAxisLabel) { ... }
+                // if (chartDataFromServer.yAxisLabel) { ... }
+
+                return new Chart(ctx, config);
+            }
+
+            // Initialize all charts
+            const peopleBuyingData = {{ people_buying_chart_data | tojson | safe }};
+            createLineChart('peopleBuyingChart', peopleBuyingData, 'Shopping Trends: Category by Season');
+
+            const brandTrendsData = {{ brand_trends_chart_data | tojson | safe }};
+            createLineChart('brandTrendsChart', brandTrendsData, 'Brand Popularity: Brand by Year');
+
+            const colorPalettesData = {{ color_palettes_chart_data | tojson | safe }};
+            createLineChart('colorPalettesChart', colorPalettesData, 'Seasonal Colors: Color by Season');
+
+            const trendLifecycleData = {{ trend_lifecycle_chart_data | tojson | safe }};
+            createLineChart('trendLifecycleChart', trendLifecycleData, 'Fashion Cycle: Style by Season');
+
+            const regionalTrendsData = {{ regional_trends_chart_data | tojson | safe }};
+            createLineChart('regionalTrendsChart', regionalTrendsData, 'Geographic Styles: Style by Country');
+
+            const stylePreferenceData = {{ style_preference_chart_data | tojson | safe }};
+            createLineChart('stylePreferenceChart', stylePreferenceData, 'Style Preferences: Style by Age Group');
+
+            const purchaseTimingData = {{ purchase_timing_chart_data | tojson | safe }};
+            createLineChart('purchaseTimingChart', purchaseTimingData, 'Purchase Timing: Period by Season');
+        });
+    </script>
+</body>
+</html>

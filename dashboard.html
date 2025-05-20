@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="active">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>Dashboard Overview</h2>
+
+            <section class="section-box">
+                <h3>Wardrobe Summary</h3>
+        <p>Total items in your wardrobe: {{ wardrobe_items_count }}</p>
+            </section>
+
+            <section class="section-box">
+                <h3>Purchase Decisions</h3>
+        <p>Total purchase reflections made: {{ purchase_history_count }}</p>
+        <p>Mindful Decisions: {{ mindful_decisions }}</p>
+        <p>Impulsive Decisions: {{ impulsive_decisions }}</p>
+            </section>
+
+            <section class="section-box">
+                <h3>Virtual Pet Status</h3>
+        <p>Current Pet Mood: {{ current_pet_mood }}</p>
+        <!-- Placeholder for mood history chart -->
+        <p><em>Pet mood history chart coming soon!</em></p>
+            </section>
+
+            <section class="section-box">
+                <h3>Tips Summary</h3>
+                <!-- Placeholder for tips -->
+                <p><em>Sustainable fashion tips coming soon!</em></p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+No,Nama_Produk,Kategori,Harga_per_Unit_USD,Rating,Asal_Region,Harga_Kat,Rating_Kat,Region_Kat
+1,Gele Headwrap,Wanita,109,4.8,Afrika,Murah,Tinggi,Lokal
+2,Denim Jacket,Pria,147,4.7,Amerika Utara,Mahal,Tinggi,Internasional
+3,Denim Skirt,Wanita,52,3.2,Amerika Utara,Murah,Rendah,Internasional
+4,Leggings,Wanita,71,3.7,Amerika Utara,Murah,Rendah,Internasional
+5,Cotton Kimono,Pria,106,4.8,Asia,Murah,Tinggi,Lokal
+6,Knit Dress,Wanita,73,4.4,Eropa,Murah,Tinggi,Internasional
+7,Leggings,Wanita,123,4.1,Amerika Utara,Mahal,Tinggi,Internasional
+8,Wool Coat,Pria,97,3.3,Eropa,Murah,Rendah,Internasional
+9,Kanga Wrap,Wanita,72,4.2,Afrika,Murah,Tinggi,Lokal
+10,Ankara Dress,Wanita,76,4.8,Afrika,Murah,Tinggi,Lokal
+11,Knit Dress,Wanita,47,4.8,Eropa,Murah,Tinggi,Internasional
+12,Leather Jacket,Pria,176,4.7,Eropa,Mahal,Tinggi,Internasional
+13,Wool Coat,Pria,198,3.6,Eropa,Mahal,Rendah,Internasional
+14,Batik Shirt,Pria,148,4.3,Asia,Mahal,Tinggi,Lokal
+15,Bubu Gown,Pria,120,4.7,Afrika,Mahal,Tinggi,Lokal
+16,Cotton Kimono,Pria,188,3.0,Asia,Mahal,Rendah,Lokal
+17,Cheongsam,Wanita,168,3.9,Asia,Mahal,Rendah,Lokal
+18,Knit Dress,Wanita,67,4.4,Eropa,Murah,Tinggi,Internasional
+19,Maxi Dress,Wanita,88,4.7,Amerika Utara,Murah,Tinggi,Internasional
+20,Cheongsam,Wanita,100,4.6,Asia,Murah,Tinggi,Lokal
+21,Trench Coat,Wanita,125,3.0,Eropa,Mahal,Rendah,Internasional
+22,Cashmere Sweater,Pria,113,4.1,Eropa,Mahal,Tinggi,Internasional
+23,Cashmere Scarf,Wanita,170,4.6,Eropa,Mahal,Tinggi,Internasional
+24,Denim Jeans,Pria,58,3.9,Eropa,Murah,Rendah,Internasional
+25,Knit Dress,Wanita,93,3.1,Eropa,Murah,Rendah,Internasional
+26,Wide-Leg Pants,Wanita,163,4.9,Eropa,Mahal,Tinggi,Internasional
+27,Tailored Suit,Pria,106,3.9,Eropa,Murah,Rendah,Internasional
+28,Graphic T-Shirt,Pria,168,4.6,Amerika Utara,Mahal,Tinggi,Internasional
+29,Denim Jeans,Pria,75,4.7,Eropa,Murah,Tinggi,Internasional
+30,Sari,Wanita,126,3.5,Asia,Mahal,Rendah,Lokal
+31,Leather Jacket,Pria,59,4.0,Eropa,Murah,Tinggi,Internasional
+32,Wide-Leg Pants,Wanita,161,3.4,Eropa,Mahal,Rendah,Internasional
+33,Trench Coat,Wanita,66,4.7,Eropa,Murah,Tinggi,Internasional
+34,Cheongsam,Wanita,135,4.0,Asia,Mahal,Tinggi,Lokal
+35,Ao Dai,Wanita,145,4.9,Asia,Mahal,Tinggi,Lokal
+36,Ao Dai,Wanita,90,4.8,Asia,Murah,Tinggi,Lokal
+37,Ao Dai,Wanita,121,3.1,Asia,Mahal,Rendah,Lokal
+38,Batik Shirt,Pria,126,4.5,Asia,Mahal,Tinggi,Lokal
+39,Sari,Wanita,95,4.7,Asia,Murah,Tinggi,Lokal
+40,Embroidered Kurta,Pria,61,3.1,Asia,Murah,Rendah,Lokal
+41,Cashmere Sweater,Pria,122,4.6,Eropa,Mahal,Tinggi,Internasional
+42,Linen Pants,Pria,77,3.9,Asia,Murah,Rendah,Lokal
+43,Cotton Kimono,Pria,161,4.0,Asia,Mahal,Tinggi,Lokal
+44,Plaid Shirt,Pria,65,4.9,Amerika Utara,Murah,Tinggi,Internasional
+45,Tailored Suit,Pria,160,3.8,Eropa,Mahal,Rendah,Internasional
+46,Bomber Jacket,Wanita,64,4.5,Amerika Utara,Murah,Tinggi,Internasional
+47,Bomber Jacket,Wanita,40,4.6,Amerika Utara,Murah,Tinggi,Internasional
+48,Kente Cloth Shirt,Pria,153,3.1,Afrika,Mahal,Rendah,Lokal
+49,Wide-Leg Pants,Wanita,87,3.1,Eropa,Murah,Rendah,Internasional
+50,Cotton Kimono,Pria,183,4.4,Asia,Mahal,Tinggi,Lokal
+51,Trench Coat,Wanita,67,3.8,Eropa,Murah,Rendah,Internasional
+52,Wool Coat,Pria,186,4.0,Eropa,Mahal,Tinggi,Internasional
+53,Leggings,Wanita,175,4.8,Amerika Utara,Mahal,Tinggi,Internasional
+54,Crop Top,Wanita,58,4.7,Amerika Utara,Murah,Tinggi,Internasional
+55,Sari,Wanita,99,4.8,Asia,Murah,Tinggi,Lokal
+56,Ao Dai,Wanita,138,3.5,Asia,Mahal,Rendah,Lokal
+57,Leather Jacket,Pria,115,3.6,Eropa,Mahal,Rendah,Internasional
+58,Hanbok,Wanita,111,3.4,Asia,Murah,Rendah,Lokal
+59,Gele Headwrap,Wanita,120,4.3,Afrika,Mahal,Tinggi,Lokal
+60,Embroidered Kurta,Pria,179,3.0,Asia,Mahal,Rendah,Lokal
+61,Cashmere Sweater,Pria,119,3.3,Eropa,Mahal,Rendah,Internasional
+62,Denim Jacket,Pria,166,3.2,Amerika Utara,Mahal,Rendah,Internasional
+63,Ao Dai,Wanita,169,4.3,Asia,Mahal,Tinggi,Lokal
+64,Ao Dai,Wanita,79,3.7,Asia,Murah,Rendah,Lokal
+65,Batik Shirt,Pria,168,3.6,Asia,Mahal,Rendah,Lokal
+66,Trench Coat,Wanita,73,4.8,Eropa,Murah,Tinggi,Internasional
+67,Denim Jeans,Pria,192,3.9,Eropa,Mahal,Rendah,Internasional
+68,Wide-Leg Pants,Wanita,73,3.9,Eropa,Murah,Rendah,Internasional
+69,Ao Dai,Wanita,166,3.2,Asia,Mahal,Rendah,Lokal
+70,Tailored Suit,Pria,126,4.4,Eropa,Mahal,Tinggi,Internasional
+71,Embroidered Kurta,Pria,70,4.8,Asia,Murah,Tinggi,Lokal
+72,Tailored Suit,Pria,180,3.3,Eropa,Mahal,Rendah,Internasional
+73,Ao Dai,Wanita,141,4.7,Asia,Mahal,Tinggi,Lokal
+74,Batik Skirt,Wanita,72,3.2,Afrika,Murah,Rendah,Lokal
+75,Wide-Leg Pants,Wanita,105,3.5,Eropa,Murah,Rendah,Internasional
+76,Cashmere Sweater,Pria,173,4.3,Eropa,Mahal,Tinggi,Internasional
+77,Cargo Shorts,Pria,81,4.5,Amerika Utara,Murah,Tinggi,Internasional
+78,Ankara Shorts,Pria,133,3.5,Afrika,Mahal,Rendah,Lokal
+79,Batik Shirt,Pria,77,3.2,Asia,Murah,Rendah,Lokal
+80,Batik Skirt,Wanita,117,3.4,Afrika,Mahal,Rendah,Lokal
+81,Wool Coat,Pria,84,4.5,Eropa,Murah,Tinggi,Internasional
+82,Dashiki,Pria,75,4.0,Afrika,Murah,Tinggi,Lokal
+83,Bridal Kaftan,Wanita,66,3.7,Afrika,Murah,Rendah,Lokal
+84,Linen Pants,Pria,109,3.9,Asia,Murah,Rendah,Lokal
+85,Gele Headwrap,Wanita,105,3.4,Afrika,Murah,Rendah,Lokal
+86,Hanbok,Wanita,149,3.2,Asia,Mahal,Rendah,Lokal
+87,Batik Shirt,Pria,52,3.3,Asia,Murah,Rendah,Lokal
+88,Sari,Wanita,74,4.5,Asia,Murah,Tinggi,Lokal
+89,Denim Jacket,Pria,194,3.5,Amerika Utara,Mahal,Rendah,Internasional
+90,Cashmere Sweater,Pria,94,4.3,Eropa,Murah,Tinggi,Internasional
+91,Crop Top,Wanita,137,4.4,Amerika Utara,Mahal,Tinggi,Internasional
+92,Cheongsam,Wanita,149,3.9,Asia,Mahal,Rendah,Lokal
+93,Cargo Shorts,Pria,170,4.5,Amerika Utara,Mahal,Tinggi,Internasional
+94,Kebaya,Wanita,49,4.0,Asia,Murah,Tinggi,Lokal
+95,Embroidered Kurta,Pria,91,3.1,Asia,Murah,Rendah,Lokal
+96,Leather Jacket,Pria,118,4.3,Eropa,Mahal,Tinggi,Internasional
+97,Knit Dress,Wanita,124,4.8,Eropa,Mahal,Tinggi,Internasional
+98,Embroidered Kurta,Pria,164,4.1,Asia,Mahal,Tinggi,Lokal
+99,Graphic T-Shirt,Pria,160,4.1,Amerika Utara,Mahal,Tinggi,Internasional
+100,Tailored Suit,Pria,117,5.0,Eropa,Mahal,Tinggi,Internasional
+101,Bubu Gown,Pria,123,3.4,Afrika,Mahal,Rendah,Lokal
+102,Embroidered Kurta,Pria,131,3.2,Asia,Mahal,Rendah,Lokal
+103,Linen Pants,Pria,50,3.5,Asia,Murah,Rendah,Lokal
+104,Ankara Dress,Wanita,51,5.0,Afrika,Murah,Tinggi,Lokal
+105,Cotton Kimono,Pria,102,4.3,Asia,Murah,Tinggi,Lokal
+106,Silk Shirt,Pria,182,3.8,Asia,Mahal,Rendah,Lokal
+107,Kanga Wrap,Wanita,78,3.1,Afrika,Murah,Rendah,Lokal
+108,Cargo Shorts,Pria,112,4.9,Amerika Utara,Murah,Tinggi,Internasional
+109,Wide-Leg Pants,Wanita,53,3.6,Eropa,Murah,Rendah,Internasional
+110,Ankara Dress,Wanita,152,4.5,Afrika,Mahal,Tinggi,Lokal
+111,Leggings,Wanita,110,4.2,Amerika Utara,Murah,Tinggi,Internasional
+112,Knit Dress,Wanita,166,3.4,Eropa,Mahal,Rendah,Internasional
+113,Leather Jacket,Pria,51,3.1,Eropa,Murah,Rendah,Internasional
+114,Leggings,Wanita,107,5.0,Amerika Utara,Murah,Tinggi,Internasional
+115,Dashiki,Pria,87,4.6,Afrika,Murah,Tinggi,Lokal
+116,Hoodie,Pria,118,3.4,Amerika Utara,Mahal,Rendah,Internasional
+117,Knit Dress,Wanita,171,4.9,Eropa,Mahal,Tinggi,Internasional
+118,Denim Jacket,Pria,180,3.1,Amerika Utara,Mahal,Rendah,Internasional
+119,Cotton Kimono,Pria,132,4.7,Asia,Mahal,Tinggi,Lokal
+120,Sari,Wanita,40,4.3,Asia,Murah,Tinggi,Lokal
+121,Maxi Dress,Wanita,107,4.2,Amerika Utara,Murah,Tinggi,Internasional
+122,Linen Pants,Pria,92,3.4,Asia,Murah,Rendah,Lokal
+123,Linen Pants,Pria,77,3.7,Asia,Murah,Rendah,Lokal
+124,Hoodie,Pria,101,3.4,Amerika Utara,Murah,Rendah,Internasional
+125,Silk Shirt,Pria,109,4.9,Asia,Murah,Tinggi,Lokal
+126,Denim Skirt,Wanita,128,3.4,Amerika Utara,Mahal,Rendah,Internasional
+127,Leather Jacket,Pria,117,3.1,Eropa,Mahal,Rendah,Internasional
+128,Crop Top,Wanita,120,3.2,Amerika Utara,Mahal,Rendah,Internasional
+129,Leggings,Wanita,73,4.7,Amerika Utara,Murah,Tinggi,Internasional
+130,Gele Headwrap,Wanita,98,3.4,Afrika,Murah,Rendah,Lokal
+131,Embroidered Kurta,Pria,183,4.0,Asia,Mahal,Tinggi,Lokal
+132,Hanbok,Wanita,82,4.6,Asia,Murah,Tinggi,Lokal
+133,Leather Jacket,Pria,170,4.9,Eropa,Mahal,Tinggi,Internasional
+134,Crop Top,Wanita,79,3.4,Amerika Utara,Murah,Rendah,Internasional
+135,Denim Jeans,Pria,179,4.1,Eropa,Mahal,Tinggi,Internasional
+136,Hoodie,Pria,101,4.7,Amerika Utara,Murah,Tinggi,Internasional
+137,Wool Coat,Pria,112,4.1,Eropa,Murah,Tinggi,Internasional
+138,Plaid Shirt,Pria,118,3.9,Amerika Utara,Mahal,Rendah,Internasional
+139,Agbada,Pria,170,4.3,Afrika,Mahal,Tinggi,Lokal
+140,Wide-Leg Pants,Wanita,137,4.7,Eropa,Mahal,Tinggi,Internasional
+141,Wide-Leg Pants,Wanita,153,4.1,Eropa,Mahal,Tinggi,Internasional
+142,Kebaya,Wanita,46,3.4,Asia,Murah,Rendah,Lokal
+143,Batik Shirt,Pria,92,4.4,Asia,Murah,Tinggi,Lokal
+144,Batik Shirt,Pria,81,3.9,Asia,Murah,Rendah,Lokal
+145,Cashmere Scarf,Wanita,135,4.2,Eropa,Mahal,Tinggi,Internasional
+146,Cashmere Scarf,Wanita,148,3.9,Eropa,Mahal,Rendah,Internasional
+147,Crop Top,Wanita,93,3.1,Amerika Utara,Murah,Rendah,Internasional
+148,Linen Pants,Pria,88,4.0,Asia,Murah,Tinggi,Lokal
+149,Cashmere Scarf,Wanita,111,4.2,Eropa,Murah,Tinggi,Internasional
+150,Wide-Leg Pants,Wanita,121,3.5,Eropa,Mahal,Rendah,Internasional

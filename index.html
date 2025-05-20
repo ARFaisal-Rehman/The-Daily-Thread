@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Should I Cop This? - Your Gen-Z AI Stylist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .drop-zone {
+            transition: all 0.3s ease;
+        }
+        .drop-zone.dragging {
+            transform: scale(1.02);
+            border-color: #9333ea;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div id="app" class="container mx-auto px-4 py-8 max-w-3xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-purple-600 mb-2">Should I Cop This? 🤔</h1>
+            <p class="text-gray-600">Your Gen-Z AI stylist telling it like it is — slay or nay</p>
+        </header>
+
+        <div class="drop-zone bg-white p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 text-center cursor-pointer hover:border-purple-400 transition-colors">
+            <div class="space-y-4">
+                <div class="text-6xl mb-4">📸</div>
+                <h3 class="text-lg font-semibold text-gray-700">Drop your fit pic here</h3>
+                <p class="text-gray-500">or click to upload</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*">
+            </div>
+        </div>
+
+        <div id="result" class="mt-8 hidden">
+            <div class="bg-white rounded-xl shadow-lg p-6 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800">The Verdict 👀</h3>
+                    <span id="score" class="text-lg font-semibold text-purple-600"></span>
+                </div>
+                <p id="verdict" class="text-gray-700 text-lg"></p>
+                <div class="mt-4">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-2">Color Palette</h4>
+                    <div id="colors" class="flex gap-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden mt-8 text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent mx-auto"></div>
+            <p class="mt-4 text-gray-600">Analyzing your fit...</p>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.querySelector('.drop-zone');
+        const fileInput = document.getElementById('fileInput');
+        const result = document.getElementById('result');
+        const loading = document.getElementById('loading');
+        const verdict = document.getElementById('verdict');
+        const score = document.getElementById('score');
+        const colors = document.getElementById('colors');
+
+        // Handle drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropZone.classList.add('dragging');
+        }
+
+        function unhighlight() {
+            dropZone.classList.remove('dragging');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        function handleFileSelect(e) {
+            const files = e.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    uploadFile(file);
+                } else {
+                    alert('Please upload an image file!');
+                }
+            }
+        }
+
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            result.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            try {
+                const response = await fetch('http://localhost:5000/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayResult(data);
+            } catch (error) {
+                alert('Error analyzing image: ' + error.message);
+            } finally {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function displayResult(data) {
+            verdict.textContent = data.verdict;
+            score.textContent = `${data.score}/100`;
+
+            // Display color palette
+            colors.innerHTML = '';
+            data.colors.forEach(color => {
+                const colorBox = document.createElement('div');
+                colorBox.className = 'w-8 h-8 rounded-full';
+                colorBox.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+                colors.appendChild(colorBox);
+            });
+
+            result.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

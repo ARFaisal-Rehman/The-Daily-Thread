@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Pet - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+    <style>
+        .pet-image {
+            max-width: 250px; /* Control pet image size */
+            height: auto;
+            border: 3px solid #d3c1ab; /* Muted border, consistent with theme */
+            padding: 5px;
+            background-color: #fffefb;
+            margin: 15px auto; /* Center the image */
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}" class="active">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>Virtual Pet Companion</h2>
+            <section class="section-box" style="text-align: center;">
+                <h3>{{ message }}</h3>
+                <p>Your <strong>{{ chosen_pet_type | capitalize }}</strong> is currently <strong>{{ pet_mood }}</strong>.</p>
+                {% if pet_image_url %}
+                    <img src="{{ pet_image_url }}" alt="Your {{ chosen_pet_type }} in a {{ pet_mood }} mood" class="pet-image">
+                {% else %}
+                    <p><em>Pet image not available.</em></p>
+                {% endif %}
+                <p><a href="{{ url_for('new_purchase') }}" class="button">Make a Purchase Reflection</a></p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

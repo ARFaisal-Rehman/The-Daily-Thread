@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Purchase Reflection - The Daily Thread</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/newspaper.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="newspaper-header">
+            <h1>The Daily Thread</h1>
+            <p class="subtitle">Your Personal Wardrobe Chronicle</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('wardrobe') }}">My Wardrobe</a></li>
+                <li><a href="{{ url_for('new_purchase') }}" class="active">New Purchase</a></li>
+                <li><a href="{{ url_for('pet') }}">Virtual Pet</a></li>
+                <li><a href="{{ url_for('trends') }}">Fashion Trends</a></li>
+                <li><a href="{{ url_for('timeless') }}">Timeless Fashion</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            </ul>
+        </nav>
+
+        <main class="content-wrapper">
+            <h2>New Purchase Reflection</h2>
+            {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+            <section class="section-box">
+                <h3>Reflect on Your Potential Purchase</h3>
+    <form method="POST">
+        <div>
+            <label for="potential_item_name">Potential Item Name:</label>
+            <input type="text" id="potential_item_name" name="potential_item_name" required>
+        </div>
+        
+        <div>
+            <p>Do you have a similar item?</p>
+            <input type="radio" id="q1_yes" name="q1_similar" value="yes" required>
+            <label for="q1_yes">Yes</label>
+            <input type="radio" id="q1_no" name="q1_similar" value="no">
+            <label for="q1_no">No</label>
+        </div>
+
+        <div>
+            <p>Will you wear this at least 10 times?</p>
+            <input type="radio" id="q2_yes" name="q2_wear_often" value="yes" required>
+            <label for="q2_yes">Yes</label>
+            <input type="radio" id="q2_no" name="q2_wear_often" value="no">
+            <label for="q2_no">No</label>
+        </div>
+
+        <div>
+            <p>Are you buying this just because it’s trending?</p>
+            <input type="radio" id="q3_yes" name="q3_trending" value="yes" required>
+            <label for="q3_yes">Yes</label>
+            <input type="radio" id="q3_no" name="q3_trending" value="no">
+            <label for="q3_no">No</label>
+        </div>
+
+        <div>
+            <p>Is this item versatile and can be styled in multiple ways?</p>
+            <input type="radio" id="q4_yes" name="q4_versatile" value="yes" required>
+            <label for="q4_yes">Yes</label>
+            <input type="radio" id="q4_no" name="q4_versatile" value="no">
+            <label for="q4_no">No</label>
+        </div>
+
+        <div>
+            <p>Does this item fill a genuine gap in your wardrobe?</p>
+            <input type="radio" id="q5_yes" name="q5_fills_gap" value="yes" required>
+            <label for="q5_yes">Yes</label>
+            <input type="radio" id="q5_no" name="q5_fills_gap" value="no">
+            <label for="q5_no">No</label>
+        </div>
+        
+        <button type="submit">Submit Reflection</button>
+    </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 The Daily Thread. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
