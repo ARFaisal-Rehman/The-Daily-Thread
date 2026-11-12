@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Colours of the Season · The Daily Thread{% endblock %}
+{% macro change(r) %}
+{% if r.interest and r.interest.change is not none %}
+<span class="delta {{ 'up' if r.interest.change > 0 else 'down' }}">{{ r.interest.change|pct }}</span>
+{% else %}<span class="delta">n/a</span>{% endif %}
+{% endmacro %}
+{% macro swatches(season, detail=true) %}
+<ul class="swatches">
+  {% for r in season.rows %}
+  <li class="swatch">
+    <span class="chip-colour" style="background: {{ r.hex }}"></span>
+    <span class="sw-name">{{ r.name }}{% if r.group == 'core' %} <span class="core">core</span>{% endif %}</span>
+    <span class="sw-code">{{ r.code }} &middot; {{ r.hex }}</span>
+    {% if detail %}
+    <span class="sw-word"><span class="dot" style="background: {{ r.family_hex }}"></span>reads as &ldquo;{{ r.family }}&rdquo;</span>
+    <span class="sw-change">&ldquo;{{ r.family }} outfit&rdquo; searches {{ change(r) }}</span>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+{% block content %}
+{% set now = story.now %}{% set last = story.last %}
+<section class="lead">
+  <article>
+    <p class="kicker">Colours of the season</p>
+    <h1>{{ now.label }}</h1>
+    <p class="standfirst">The ten shades and five core neutrals Pantone picked from the New York Fashion Week runways, and whether people are actually searching for them. Each colour is matched to the everyday word nearest to it (by CIELAB distance), and searches for &ldquo;&lt;word&gt; outfit&rdquo; from {{ now.start }} to {{ as_of }} are compared with the same dates a year earlier.</p>
+  </article>
+</section>
+
+{% set movers = story.movers %}
+{% if movers %}
+<div class="carry headline-stats">
+  <div><h3>Gaining most</h3><p><span class="dot" style="background: {{ movers[0].family_hex }}"></span>{{ movers[0].family|capitalize }} <span class="delta up">{{ movers[0].interest.change|pct }}</span> <span class="meta">({{ movers[0].name }})</span></p></div>
+  <div><h3>Losing most</h3><p><span class="dot" style="background: {{ movers[-1].family_hex }}"></span>{{ movers[-1].family|capitalize }} <span class="delta {{ 'down' if movers[-1].interest.change < 0 else 'up' }}">{{ movers[-1].interest.change|pct }}</span> <span class="meta">({{ movers[-1].name }})</span></p></div>
+  {% if story.shift %}<div><h3>Against {{ story.shift.from }}</h3>{% set sh = story.shift %}<p>{% if sh.lightness|abs < 0.01 %}Same lightness{% else %}{{ 'Lighter' if sh.lightness > 0 else 'Darker' }} by {{ '%.2f'|format(sh.lightness|abs) }}{% endif %}, {% if sh.saturation|abs < 0.01 %}same saturation{% else %}{{ 'more' if sh.saturation > 0 else 'less' }} saturated by {{ '%.2f'|format(sh.saturation|abs) }}{% endif %}, warm share {{ '%+.0f'|format(sh.warm * 100) }} points.</p></div>{% endif %}
+</div>
+{% endif %}
+{{ swatches(now) }}
+<p class="source">&ldquo;n/a&rdquo; means Google Trends refused that query at the last refresh (it rate-limits scripts); the next refresh fills it in. Palette: <a href="{{ now.url }}">Pantone Fashion Color Trend Report, NYFW {{ now.label }}</a>.</p>
+
+<section class="block">
+  <h2>From last season to this one</h2>
+  <p>Last season was {{ last.label }}. Here's how the everyday colour words moved between the two palettes.</p>
+  <div class="carry">
+    <div><h3>Stayed</h3><p>{{ story.carried.stayed|join(', ') or 'None' }}</p></div>
+    <div><h3>Arrived</h3><p>{{ story.carried.new|join(', ') or 'None' }}</p></div>
+    <div><h3>Left</h3><p>{{ story.carried.gone|join(', ') or 'None' }}</p></div>
+  </div>
+</section>
+
+<section class="block">
+  <h2>How the palette has shifted</h2>
+  <p>Each season's 15 or 16 Pantone colours, summarised. Lightness and saturation are means on a 0 to 1 scale (HSL); warm, cool and neutral are shares of the palette.</p>
+  <div class="table-scroll">
+  <table class="profile">
+    <thead><tr><th scope="col">Season</th><th scope="col">Palette</th><th scope="col" class="n">Lightness</th><th scope="col" class="n">Saturation</th><th scope="col" class="n">Warm</th><th scope="col" class="n">Cool</th><th scope="col" class="n">Neutral</th></tr></thead>
+    <tbody>
+    {% for s in story.timeline %}
+      <tr {% if s.id == now.id %}class="current"{% endif %}>
+        <th scope="row">{{ s.label }}{% if s.id == now.id %} <span class="core">now</span>{% endif %}</th>
+        <td><span class="strip">{% for r in s.rows %}<span style="background: {{ r.hex }}" title="{{ r.name }}"></span>{% endfor %}</span></td>
+        <td class="n">{{ '%.2f'|format(s.profile.lightness) }}</td>
+        <td class="n">{{ '%.2f'|format(s.profile.saturation) }}</td>
+        <td class="n">{{ '%.0f'|format(s.profile.warm * 100) }}%</td>
+        <td class="n">{{ '%.0f'|format(s.profile.cool * 100) }}%</td>
+        <td class="n">{{ '%.0f'|format(s.profile.neutral * 100) }}%</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="block">
+  <h2>Last season's colours, judged by searches</h2>
+  <p>{{ last.label }}: searches for each colour word during that season ({{ last.start }} to {{ last.end }}) against the same dates a year before. A rise means the colour gained influence while it was in fashion; a fall means the runway call didn't catch on in searches.</p>
+  {{ swatches(last) }}
+</section>
+
+{% if story.next %}
+<section class="block">
+  <h2>Next season: {{ story.next.label }}</h2>
+  <p>Already published by Pantone. Search interest will be judged here once the season starts.</p>
+  {{ swatches(story.next, detail=false) }}
+</section>
+{% endif %}
+{% endblock %}

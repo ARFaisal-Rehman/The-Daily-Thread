@@ -1,105 +1,185 @@
-# The Daily Thread - Mindful Fashion Companion
+<div align="center">
+
+```
+██████╗  █████╗ ██╗██╗  ██╗   ██╗  ████████╗██╗  ██╗██████╗ ███████╗ █████╗ ██████╗
+██╔══██╗██╔══██╗██║██║  ╚██╗ ██╔╝  ╚══██╔══╝██║  ██║██╔══██╗██╔════╝██╔══██╗██╔══██╗
+██║  ██║███████║██║██║   ╚████╔╝█████╗██║   ███████║██████╔╝█████╗  ███████║██║  ██║
+██║  ██║██╔══██║██║██║    ╚██╔╝ ╚════╝██║   ██╔══██║██╔══██╗██╔══╝  ██╔══██║██║  ██║
+██████╔╝██║  ██║██║███████╗██║        ██║   ██║  ██║██║  ██║███████╗██║  ██║██████╔╝
+╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚═╝        ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝
+```
+
+### A Fashion Trend Radar: What Is In, What Is Out, and the Colours of the Season, from Live Search Data
+
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
+[![Google Trends](https://img.shields.io/badge/Google_Trends-pytrends-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://trends.google.com)
+[![Wikipedia](https://img.shields.io/badge/Wikimedia-pageviews_API-000000?style=for-the-badge&logo=wikipedia&logoColor=white)](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/)
+[![SQLite](https://img.shields.io/badge/SQLite-wardrobe-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![Tests](https://img.shields.io/badge/tests-pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)](tests/)
+
+<img src="docs/front.jpg" alt="The Daily Thread front page: terms sorted into In, Holding and Out with sparklines" width="100%">
+
+</div>
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [What changed in the November 2026 revision](#what-changed-in-the-november-2026-revision)
+- [How It Works](#how-it-works)
+- [Results](#results)
+- [Getting Started](#getting-started)
+- [Data and Licences](#data-and-licences)
+- [Challenges and Solutions](#challenges-and-solutions)
+- [Roadmap](#roadmap)
+- [Author](#author)
+
+---
 
 ## Overview
-The Daily Thread is a web application designed to promote mindful fashion consumption. It helps users manage their wardrobe, make thoughtful purchase decisions, and visualize fashion trends through data analysis. The application features a virtual pet companion that responds to your shopping habits, encouraging sustainable fashion choices.
 
-## Features
+The Daily Thread reads public search data and tells you, in newspaper form:
 
-### 🧥 Wardrobe Management
-- Add, view, and delete clothing items in your digital wardrobe
-- Track details like item name, type, color, brand, and purchase date
-- Organize your collection for better visibility of what you own
+1. **What is in and what is out.** 36 fashion terms (denim cuts, shoes, aesthetics, pieces), each labelled Rising, Peaking, Stable, Fading or Out from five years of weekly Google Trends data, with Wikipedia page views as a second opinion.
+2. **The colours of the season.** Pantone's New York Fashion Week palette for the current season, whether people are actually searching for those colours compared with a year ago, what changed from last season's palette, and a preview of next season.
+3. **Whether to buy it.** A wardrobe you can fill in and a five-question purchase check that scores a planned buy, using the radar (buying a Rising style means buying near the top of the hype).
 
-### 🛍️ Mindful Purchase Decision Helper
-- Answer questions about potential purchases to determine if they're mindful or impulsive
-- Assessment based on criteria like:
-  - Whether you already own similar items
-  - How often you'll wear the item
-  - If you're buying just because it's trending
-  - The item's versatility
-  - Whether it fills a genuine gap in your wardrobe
+Every label comes from a written rule, shown on the site's How It Works page.
 
-### 🐶 Virtual Pet Companion
-- Choose between different pet types (dog, cat, hamster)
-- Pet's mood changes based on your purchase decisions
-- Provides visual feedback on your shopping habits
+## What changed in the November 2026 revision
 
-### 📊 Fashion Trend Analysis
-- Visualize fashion data from multiple sources
-- Analyze trends across seasons, brands, colors, and styles
-- View shopping patterns and brand popularity over time
-- Geographic style distribution and age-based preferences
+| Before | After |
+|---|---|
+| Repo could not run: HTML files at the root, no `templates/` or `static/` | Standard Flask layout, one command to run |
+| "Trends" from synthetic Kaggle sets and mock CSVs (about 14 MB committed) | Live Google Trends and Wikipedia data, saved as dated snapshots; synthetic data removed |
+| Wardrobe and purchase history kept in the session cookie (about 4 KB cap, items silently dropped) | SQLite, keyed to an anonymous per-browser id |
+| No notion of "in" or "out" | Five labels from year-on-year change and distance from the five-year high |
+| No colour analysis | Pantone palettes for four seasons, mapped to everyday colour words by CIELAB distance, with search interest year on year |
+| Reddit feed needing API keys, unused TensorFlow dependency, emoji README | Removed |
+| No tests | pytest suite for the label rules, colour maths and every page |
 
-## Installation
+## How It Works
 
-### Prerequisites
-- Python 3.7+
-- pip package manager
+```
+data/terms.json ──┐                                   ┌──► Trend Radar  (In / Holding / Out)
+                  ├─► scripts/refresh_trends.py ──────┤
+Pantone reports ──┤     Google Trends, 5 y weekly     │    thread/trends.py
+ (build_palettes) │     Wikipedia, monthly views      ├──► Term page    (chart + signals)
+                  │            │                      │
+data/palettes.json┘            ▼                      │    thread/colours.py
+                     data/snapshots/YYYY-MM-DD.json ──┼──► Colours of the Season
+                                                      │
+                     data/thread.db (SQLite) ─────────┴──► Wardrobe, Should I Buy It?
+```
 
-### Setup
-1. Clone the repository
-2. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+**Trend label.** For each term's weekly series (Google's 0 to 100 scale, the unfinished week dropped):
 
-### Dependencies
-The application relies on the following main packages:
-- Flask - Web framework
-- Pandas - Data analysis and manipulation
-- PyTrends - Google Trends API interface
-- PRAW - Reddit API wrapper
-- Flask-CORS - Cross-Origin Resource Sharing for Flask
-- Pillow - Image processing
-- TensorFlow - Machine learning (for potential future features)
+| Signal | Definition |
+|---|---|
+| Year on year | mean of the last 12 weeks vs the same 12 weeks a year earlier (cancels seasonality) |
+| Share of high | last 12 weeks vs the busiest 12-week stretch in five years |
+| Momentum | slope of the last 12 weeks, as % of their mean per week (shown, not used in the label) |
 
-## Usage
+| Label | Rule (checked in this order) |
+|---|---|
+| Rising | year on year +25% or more |
+| Out | year on year -25% or less and under 40% of the five-year high |
+| Fading | year on year -10% or less |
+| Peaking | 80% or more of the five-year high |
+| Stable | anything else |
 
-1. Start the application:
-   ```
-   python app.py
-   ```
-2. Open your web browser and navigate to `http://localhost:5000`
-3. Navigate through the different sections:
-   - Home: Overview and pet selection
-   - My Wardrobe: Manage your clothing items
-   - New Purchase: Evaluate potential purchases
-   - Virtual Pet: Check your pet's mood based on your decisions
-   - Fashion Trends: Explore data visualizations of fashion trends
-   - Timeless Fashion: View classic fashion pieces that never go out of style
-   - Dashboard: Get an overview of your wardrobe and purchase history
+Terms averaging under 5 on Google's scale are flagged low volume. If the term has a Wikipedia article, the last three months of views against the same months a year earlier is shown beside the label, with whether it points the same way.
 
-## Project Structure
+**Colours.** Nobody searches for "Arabian Spice", so each Pantone colour is matched to the nearest of about 40 everyday colour words ("rust", "sage green") by Delta E in CIELAB. Searches for "&lt;word&gt; outfit" during the season are compared with the same dates a year earlier. Palettes are summarised by mean HSL lightness and saturation and by warm, cool and neutral shares.
 
-- `app.py` - Main application file with Flask routes and data processing functions
-- `templates/` - HTML templates for the web interface
-  - `index.html` - Home page
-  - `wardrobe.html` - Wardrobe management interface
-  - `new_purchase.html` - Purchase decision helper
-  - `pet.html` - Virtual pet companion interface
-  - `trends.html` - Fashion trend analysis visualizations
-  - `timeless.html` - Timeless fashion pieces
-  - `dashboard.html` - User dashboard with statistics
-- `static/` - Static files (CSS, images)
-  - `css/newspaper.css` - Styling for the application
-  - `img/pets/` - Pet images for different moods and types
-- `*.csv`, `*.xls`, `*.xlsx` - Fashion datasets for trend analysis
+**Snapshots.** Google rate-limits scripted requests, so the app never calls it live. `scripts/refresh_trends.py` saves a dated snapshot (resumable: a re-run fetches only what is missing) and the app reads the newest one.
 
-## Data Analysis
+## Results
 
-The application processes various fashion datasets to provide insights on:
-- Current shopping trends by season and category
-- Brand popularity analysis over time
-- Seasonal color trends
-- Fashion cycle analysis
-- Geographic style distribution
-- Age-based style preferences
-- Optimal purchase periods
+From the committed snapshot of 13 November 2026 (worldwide). Reproduce with `python scripts/summarise.py`.
 
-## Contributing
+**Coverage.** 33 of 36 terms (Google blocked *barn jacket*, *bomber jacket* and *trench coat* after repeated retries), 17 of 36 colour words, 11 Wikipedia articles. Missing data shows as "n/a" on the site; the next refresh fills it.
 
-Contributions to improve The Daily Thread are welcome. Please feel free to submit pull requests or open issues to suggest improvements or report bugs.
+**Labels:** 11 Rising, 2 Peaking, 15 Stable, 2 Fading, 3 Out.
 
-## License
+| Biggest risers | Year on year | | Biggest fallers | Year on year |
+|---|---|---|---|---|
+| ballet flats | +105% | | old money aesthetic | -45% (Out) |
+| capri pants | +93% | | office siren | -28% (Out) |
+| barrel jeans | +83% | | mob wife aesthetic | -26% (Out, low volume) |
+| sheer dress | +72% | | adidas samba | -14% (Fading) |
+| maxi skirt | +62% | | clean girl aesthetic | -11% (Fading) |
 
-This project is available for personal and educational use.
+**The second signal disagrees more often than it agrees.** Wikipedia views point the same way as Google searches for only 4 of the 11 terms with an article (for example *adidas samba*: Google -14%, Wikipedia -42%; *skinny jeans*: Google +38%, Wikipedia -26%). Encyclopaedia readers and shoppers are different audiences, so the site shows the Wikipedia figure beside each label instead of mixing it into the label.
+
+**Colours of the season (Autumn/Winter 2026/27).** Searches for "&lt;word&gt; outfit" from 1 September to 1 November 2026 against the same weeks of 2025:
+
+| Pantone colour | Reads as | Change | | Pantone colour | Reads as | Change |
+|---|---|---|---|---|---|---|
+| Acacia | butter yellow | +204% | | Toffee | brown | +25% |
+| Red Mahogany | chocolate brown | +89% | | Egret | cream | +18% |
+| Burnt Olive | forest green | +30% | | Candied Ginger | khaki | -4% |
+| Arabian Spice | brown | +25% | | Festival Fuchsia | fuchsia | -39% |
+
+Against last season (Spring/Summer 2026), the palette swapped beige, burgundy, plum, sage, teal and terracotta for browns, khaki, olive, mint, grey and fuchsia. Against the same season a year earlier (Autumn/Winter 2025/26) it is a little less saturated (0.39 vs 0.45) and less warm (67% vs 73%). Next season (Spring/Summer 2027) is the lightest and most saturated of the four (0.57 lightness, 0.56 saturation).
+
+| Season | Lightness | Saturation | Warm | Cool | Neutral |
+|---|---|---|---|---|---|
+| Autumn/Winter 2025/26 | 0.50 | 0.45 | 73% | 20% | 7% |
+| Spring/Summer 2026 | 0.51 | 0.41 | 62% | 31% | 6% |
+| Autumn/Winter 2026/27 | 0.50 | 0.39 | 67% | 27% | 7% |
+| Spring/Summer 2027 | 0.57 | 0.56 | 67% | 27% | 7% |
+
+<img src="docs/colours.jpg" alt="Colours of the Season page with Pantone swatches and search changes" width="100%">
+
+## Getting Started
+
+```bash
+pip install -r requirements.txt
+python app.py                        # http://localhost:5004, reads the committed snapshot
+python -m pytest                     # tests
+```
+
+Refresh the data (takes 10 to 20 minutes because of rate limits; re-run if some terms come back empty):
+
+```bash
+python scripts/refresh_trends.py     # writes data/snapshots/<today>.json
+python scripts/summarise.py          # prints the tables in this README
+python scripts/build_palettes.py     # re-reads the Pantone reports into data/palettes.json
+```
+
+Edit `data/terms.json` to track different terms.
+
+## Data and Licences
+
+| Data | Use | Terms |
+|---|---|---|
+| Google Trends, via [pytrends](https://github.com/GeneralMills/pytrends) 4.9.2 | Weekly search interest | Public Google data; pytrends is unofficial and archived (April 2025), so refreshes can break |
+| [Wikimedia pageviews API](https://doc.wikimedia.org/generated-data-platform/aqs/analytics-api/) | Monthly article views | CC0 data, official API |
+| [Pantone Fashion Color Trend Reports](https://www.pantone.com/fashion-color-trend-report), NYFW AW25/26, SS26, AW26/27, SS27 | Season palettes | Only colour names, codes and chip hex values are stored, with links to each report |
+
+## Challenges and Solutions
+
+| Challenge | Solution |
+|---|---|
+| Google Trends blocks scripted requests after a few dozen queries | Back-off and retry per query, resumable dated snapshots, and an app that only reads snapshots |
+| Seasonal items (boots in October) look like trends | Compare the last 12 weeks with the same 12 weeks a year earlier, not with the previous 12 weeks |
+| Google's numbers are relative, not absolute | Each term is fetched on its own, so year-on-year ratios are within one series |
+| Pantone colour names aren't searched | Nearest everyday colour word by CIELAB distance; the distance is kept so poor matches are visible |
+| Short spikes shared by unrelated terms (mid-February 2026) | Labels use 12-week means, so one odd week can't decide a label; noted on the site |
+| pytrends' retry option breaks on urllib3 2 | Own retry loop with exponential back-off |
+
+## Roadmap
+
+- Pakistan as a second region (Google Trends `geo=PK`) beside worldwide.
+- A scheduled weekly refresh (GitHub Actions) that commits the new snapshot.
+- Reddit mentions as a third signal for users who add their own API key.
+- The social side of the original idea: a feed where people post outfits and react, on top of the existing SQLite store. The original virtual pet is retired.
+- Backtesting the labels: did terms labelled Rising a year ago keep rising?
+
+## Author
+
+**Abdul Rehman Faisal** · BS Data Science, GIKI (2027)
+[GitHub](https://github.com/ARFaisal-Rehman) · [LinkedIn](https://linkedin.com/in/abdul-rehman-faisal-2a680b297)

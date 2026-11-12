@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% macro row(i) %}
+<li class="trend-row">
+  <a href="{{ url_for('trend', term_slug=i.slug) }}">
+    <span class="term">{{ i.term }}</span>
+    <svg class="spark" viewBox="0 0 120 32" role="img" aria-label="Weekly search interest over the last two years for {{ i.term }}"><path d="{{ i.spark }}"/></svg>
+    <span class="num">{{ i.yoy|pct }}</span>
+  </a>
+  <span class="meta">{{ i.category }}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}</span>
+</li>
+{% endmacro %}
+{% block content %}
+<section class="lead">
+  {% if lead %}
+  <article>
+    <p class="kicker">Biggest riser</p>
+    <h1><a href="{{ url_for('trend', term_slug=lead.slug) }}">{{ lead.term|capitalize }}: searches {{ lead.yoy|pct }} on a year ago</a></h1>
+    <p class="standfirst">The last 12 weeks of worldwide Google searches against the same 12 weeks of last year. Labelled <strong class="tag tag-{{ lead.label|lower }}">{{ lead.label }}</strong>.</p>
+  </article>
+  {% endif %}
+  {% if falling %}
+  <article class="second">
+    <p class="kicker">Biggest faller</p>
+    <h2><a href="{{ url_for('trend', term_slug=falling.slug) }}">{{ falling.term|capitalize }}: {{ falling.yoy|pct }}</a></h2>
+    <p class="standfirst">Labelled <strong class="tag tag-{{ falling.label|lower }}">{{ falling.label }}</strong>, at {{ '%.0f'|format(falling.vs_peak * 100) }}% of its five-year high.</p>
+  </article>
+  {% endif %}
+</section>
+
+<form class="filters" method="get" aria-label="Filter by category">
+  <a href="{{ url_for('front') }}" class="chip" {% if not category %}aria-current="true"{% endif %}>All {{ total if not category else '' }}</a>
+  {% for c in categories %}<a class="chip" href="{{ url_for('front', category=c) }}" {% if category == c %}aria-current="true"{% endif %}>{{ c }}</a>{% endfor %}
+</form>
+
+<div class="columns">
+  <section aria-labelledby="h-in">
+    <h2 id="h-in" class="col-head">In</h2>
+    <p class="col-note">Rising: searches up 25% or more on last year. Peaking: near a five-year high.</p>
+    {% for lab in ['Rising', 'Peaking'] %}{% if groups[lab] %}
+    <h3 class="tag tag-{{ lab|lower }}">{{ lab }}</h3>
+    <ul class="trend-list">{% for i in groups[lab] %}{{ row(i) }}{% endfor %}</ul>
+    {% endif %}{% endfor %}
+  </section>
+  <section aria-labelledby="h-hold">
+    <h2 id="h-hold" class="col-head">Holding</h2>
+    <p class="col-note">Between &minus;10% and +25% on last year and below 80% of its high. The quiet staples.</p>
+    <h3 class="tag tag-stable">Stable</h3>
+    <ul class="trend-list">{% for i in groups['Stable'] %}{{ row(i) }}{% else %}<li class="empty">Nothing is holding steady in this category.</li>{% endfor %}</ul>
+  </section>
+  <section aria-labelledby="h-out">
+    <h2 id="h-out" class="col-head">Out</h2>
+    <p class="col-note">Fading: down 10% or more on last year. Out: down 25% or more and under 40% of its high.</p>
+    {% for lab in ['Fading', 'Out'] %}{% if groups[lab] %}
+    <h3 class="tag tag-{{ lab|lower }}">{{ lab }}</h3>
+    <ul class="trend-list">{% for i in groups[lab] %}{{ row(i) }}{% endfor %}</ul>
+    {% endif %}{% endfor %}
+  </section>
+</div>
+{% endblock %}

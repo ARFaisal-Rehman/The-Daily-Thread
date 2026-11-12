@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}My Wardrobe · The Daily Thread{% endblock %}
+{% block content %}
+<section class="lead">
+  <article>
+    <p class="kicker">My wardrobe</p>
+    <h1>What you own, against the radar</h1>
+    <p class="standfirst">Add the pieces you already have. Each one is checked against this season's colours ({{ season.label if season else 'no palette' }}) and, if you link a style, against its search trend. Saved on this site's database for this browser; no account needed.</p>
+  </article>
+</section>
+
+<div class="two-col">
+  <form class="card form" method="post" aria-labelledby="add-h">
+    <h2 id="add-h">Add an item</h2>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <label for="name">Name</label>
+    <input id="name" name="name" maxlength="80" required placeholder="e.g. Brown suede jacket" value="{{ request.form.name }}">
+    <label for="kind">Type</label>
+    <select id="kind" name="kind" required>
+      {% for k in kinds %}<option {% if request.form.kind == k %}selected{% endif %}>{{ k }}</option>{% endfor %}
+    </select>
+    <label for="colour">Main colour</label>
+    <input id="colour" name="colour" type="color" value="{{ request.form.colour or '#755139' }}">
+    <label for="term">Style it belongs to <span class="hint">(optional)</span></label>
+    <select id="term" name="term">
+      <option value="">None of these</option>
+      {% for s in styles|sort(attribute='term') %}<option value="{{ s.slug }}" {% if request.form.term == s.slug %}selected{% endif %}>{{ s.term }}</option>{% endfor %}
+    </select>
+    <button class="button" type="submit">Add to wardrobe</button>
+  </form>
+
+  <section aria-labelledby="list-h">
+    <h2 id="list-h">{{ items|length }} item{{ '' if items|length == 1 else 's' }}</h2>
+    {% if items %}
+    <p class="col-note">{{ items|selectattr('in_season')|list|length }} of {{ items|length }} are in this season's colours.</p>
+    <ul class="wardrobe">
+      {% for i in items %}
+      <li class="card item">
+        <span class="chip-colour small" style="background: {{ i.colour }}"></span>
+        <div>
+          <h3>{{ i.name }}</h3>
+          <p class="meta">{{ i.kind }} &middot; reads as {{ i.family }} &middot; {% if i.in_season %}<strong>in season</strong>{% else %}not in this season's palette{% endif %}</p>
+          {% if i.trend %}<p class="meta"><a href="{{ url_for('trend', term_slug=i.trend.slug) }}">{{ i.trend.term }}</a>: <span class="tag tag-{{ i.trend.label|lower }}">{{ i.trend.label }}</span> {{ i.trend.yoy|pct }}</p>{% endif %}
+        </div>
+        <form method="post" action="{{ url_for('delete_item', item_id=i.id) }}">
+          <button class="link-button" type="submit" aria-label="Remove {{ i.name }}">Remove</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">Nothing here yet. Add a piece you wear often; the radar will tell you where it stands.</p>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

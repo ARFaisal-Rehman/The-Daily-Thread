@@ -1,0 +1,416 @@
+{
+ "source": "Pantone Fashion Color Trend Report, New York Fashion Week (pantone.com)",
+ "built": "2026-11-13",
+ "seasons": [
+  {
+   "id": "aw25",
+   "label": "Autumn/Winter 2025/26",
+   "window": [
+    "09-01",
+    "02-28"
+   ],
+   "url": "https://www.pantone.com/na/en-us/articles/fashion-color-trend-report/new-york-fashion-week-autumn-winter-2025-2026",
+   "colours": [
+    {
+     "name": "Lemon Grass",
+     "code": "12-0626 TCX",
+     "hex": "#DCD494",
+     "group": "top10"
+    },
+    {
+     "name": "Brandied Melon",
+     "code": "16-1340 TCX",
+     "hex": "#CE7B5B",
+     "group": "top10"
+    },
+    {
+     "name": "Lyons Blue",
+     "code": "19-4340 TCX",
+     "hex": "#015871",
+     "group": "top10"
+    },
+    {
+     "name": "Damson",
+     "code": "18-1716 TCX",
+     "hex": "#854C65",
+     "group": "top10"
+    },
+    {
+     "name": "Primrose Pink",
+     "code": "12-2904 TCX",
+     "hex": "#EED4D9",
+     "group": "top10"
+    },
+    {
+     "name": "Winterberry",
+     "code": "17-1640 TCX",
+     "hex": "#BE394F",
+     "group": "top10"
+    },
+    {
+     "name": "Hot Chocolate",
+     "code": "19-1325 TCX",
+     "hex": "#683B39",
+     "group": "top10"
+    },
+    {
+     "name": "Chili Oil",
+     "code": "18-1440 TCX",
+     "hex": "#8F3D37",
+     "group": "top10"
+    },
+    {
+     "name": "Poppy Red",
+     "code": "17-1664 TCX",
+     "hex": "#DC343B",
+     "group": "top10"
+    },
+    {
+     "name": "Bronze Brown",
+     "code": "18-0937 TCX",
+     "hex": "#825E2F",
+     "group": "top10"
+    },
+    {
+     "name": "Bright White",
+     "code": "11-0601 TCX",
+     "hex": "#F4F9FF",
+     "group": "core"
+    },
+    {
+     "name": "French Roast",
+     "code": "19-1012 TCX",
+     "hex": "#58423F",
+     "group": "core"
+    },
+    {
+     "name": "Vapor Blue",
+     "code": "14-4203 TCX",
+     "hex": "#BEBDBD",
+     "group": "core"
+    },
+    {
+     "name": "Crown Blue",
+     "code": "19-3926 TCX",
+     "hex": "#464B65",
+     "group": "core"
+    },
+    {
+     "name": "Mauve Wine",
+     "code": "19-1716 TCX",
+     "hex": "#5B3644",
+     "group": "core"
+    }
+   ]
+  },
+  {
+   "id": "ss26",
+   "label": "Spring/Summer 2026",
+   "window": [
+    "03-01",
+    "08-31"
+   ],
+   "url": "https://www.pantone.com/na/en-us/articles/fashion-color-trend-report/new-york-fashion-week-spring-summer-2026",
+   "colours": [
+    {
+     "name": "Acacia",
+     "code": "13-0640 TCX",
+     "hex": "#DACD65",
+     "group": "top10"
+    },
+    {
+     "name": "Marina",
+     "code": "17-4041 TCX",
+     "hex": "#5085C3",
+     "group": "top10"
+    },
+    {
+     "name": "Muskmelon",
+     "code": "15-1242 TCX",
+     "hex": "#EC935E",
+     "group": "top10"
+    },
+    {
+     "name": "Alexandrite",
+     "code": "18-4835 TCX",
+     "hex": "#00666C",
+     "group": "top10"
+    },
+    {
+     "name": "Lava Falls",
+     "code": "18-1552 TCX",
+     "hex": "#9A2B2E",
+     "group": "top10"
+    },
+    {
+     "name": "Dusty Rose",
+     "code": "17-1718 TCX",
+     "hex": "#BA797D",
+     "group": "top10"
+    },
+    {
+     "name": "Tea Rose",
+     "code": "16-1620 TCX",
+     "hex": "#DC7178",
+     "group": "top10"
+    },
+    {
+     "name": "Amaranth",
+     "code": "19-2410 TCX",
+     "hex": "#6F3C56",
+     "group": "top10"
+    },
+    {
+     "name": "Burnt Sienna",
+     "code": "17-1544 TCX",
+     "hex": "#C65D52",
+     "group": "top10"
+    },
+    {
+     "name": "Burnished Lilac",
+     "code": "15-1905 TCX",
+     "hex": "#C5AEB1",
+     "group": "top10"
+    },
+    {
+     "name": "Coffee Bean",
+     "code": "19-0915 TCX",
+     "hex": "#40312F",
+     "group": "core"
+    },
+    {
+     "name": "White Onyx",
+     "code": "12-4300 TCX",
+     "hex": "#D7D6CE",
+     "group": "core"
+    },
+    {
+     "name": "Rhodonite",
+     "code": "19-3838 TCX",
+     "hex": "#302C4D",
+     "group": "core"
+    },
+    {
+     "name": "Angora",
+     "code": "12-0605 TCX",
+     "hex": "#DFD1BB",
+     "group": "core"
+    },
+    {
+     "name": "Sycamore",
+     "code": "19-5917 TCX",
+     "hex": "#35463D",
+     "group": "core"
+    },
+    {
+     "name": "Sage Green",
+     "code": "15-0318 TCX",
+     "hex": "#B2AC88",
+     "group": "core"
+    }
+   ]
+  },
+  {
+   "id": "aw26",
+   "label": "Autumn/Winter 2026/27",
+   "window": [
+    "09-01",
+    "02-28"
+   ],
+   "url": "https://www.pantone.com/na/en-us/articles/fashion-color-trend-report/new-york-fashion-week-autumn-winter-2026",
+   "colours": [
+    {
+     "name": "Muted Clay",
+     "code": "16-1330 TCX",
+     "hex": "#D29380",
+     "group": "top10"
+    },
+    {
+     "name": "Neptune Green",
+     "code": "14-6017 TCX",
+     "hex": "#7FBB9E",
+     "group": "top10"
+    },
+    {
+     "name": "Green Envy",
+     "code": "16-0541 TCX",
+     "hex": "#A19436",
+     "group": "top10"
+    },
+    {
+     "name": "Arabian Spice",
+     "code": "19-1245 TCX",
+     "hex": "#884332",
+     "group": "top10"
+    },
+    {
+     "name": "Foxglove",
+     "code": "16-1710 TCX",
+     "hex": "#B98391",
+     "group": "top10"
+    },
+    {
+     "name": "Festival Fuchsia",
+     "code": "19-2434 TCX",
+     "hex": "#9E2C6A",
+     "group": "top10"
+    },
+    {
+     "name": "Red Mahogany",
+     "code": "19-1521 TCX",
+     "hex": "#60373D",
+     "group": "top10"
+    },
+    {
+     "name": "Acacia",
+     "code": "13-0640 TCX",
+     "hex": "#DACD65",
+     "group": "top10"
+    },
+    {
+     "name": "All Aboard",
+     "code": "17-4140 TCX",
+     "hex": "#5C97CB",
+     "group": "top10"
+    },
+    {
+     "name": "Burnt Olive",
+     "code": "18-0521 TCX",
+     "hex": "#646049",
+     "group": "top10"
+    },
+    {
+     "name": "Egret",
+     "code": "11-0103 TCX",
+     "hex": "#F3ECE0",
+     "group": "core"
+    },
+    {
+     "name": "Candied Ginger",
+     "code": "15-1213 TCX",
+     "hex": "#BFA387",
+     "group": "core"
+    },
+    {
+     "name": "Toffee",
+     "code": "18-1031 TCX",
+     "hex": "#755139",
+     "group": "core"
+    },
+    {
+     "name": "Underworld",
+     "code": "17-4005 TCX",
+     "hex": "#83807B",
+     "group": "core"
+    },
+    {
+     "name": "Poseidon",
+     "code": "19-4033 TCX",
+     "hex": "#133955",
+     "group": "core"
+    }
+   ]
+  },
+  {
+   "id": "ss27",
+   "label": "Spring/Summer 2027",
+   "window": [
+    "03-01",
+    "08-31"
+   ],
+   "url": "https://www.pantone.com/na/en-us/fashion-color-trend-report/new-york-fashion-week-spring-summer-2027",
+   "colours": [
+    {
+     "name": "Anise Flower",
+     "code": "12-0717 TCX",
+     "hex": "#F4E3B5",
+     "group": "top10"
+    },
+    {
+     "name": "Princess Blue",
+     "code": "19-4150 TCX",
+     "hex": "#00539C",
+     "group": "top10"
+    },
+    {
+     "name": "Waterfall",
+     "code": "15-5516 TCX",
+     "hex": "#3AB0A2",
+     "group": "top10"
+    },
+    {
+     "name": "Langoustino",
+     "code": "16-1440 TCX",
+     "hex": "#CA6C56",
+     "group": "top10"
+    },
+    {
+     "name": "Chili Pepper",
+     "code": "19-1557 TCX",
+     "hex": "#9B1B30",
+     "group": "top10"
+    },
+    {
+     "name": "Rosy Future",
+     "code": "15-1910 TCX",
+     "hex": "#F37E9B",
+     "group": "top10"
+    },
+    {
+     "name": "Dragon Fire",
+     "code": "16-1460 TCX",
+     "hex": "#FD652D",
+     "group": "top10"
+    },
+    {
+     "name": "Daiquiri Green",
+     "code": "12-0435 TCX",
+     "hex": "#C9D77E",
+     "group": "top10"
+    },
+    {
+     "name": "Hibiscus",
+     "code": "18-1762 TCX",
+     "hex": "#DE3848",
+     "group": "top10"
+    },
+    {
+     "name": "Lavender Oil",
+     "code": "15-3615 TCX",
+     "hex": "#C3A6CD",
+     "group": "top10"
+    },
+    {
+     "name": "Antique White",
+     "code": "11-0105 TCX",
+     "hex": "#EEE5D3",
+     "group": "core"
+    },
+    {
+     "name": "Tarragon",
+     "code": "15-0326 TCX",
+     "hex": "#A4AE77",
+     "group": "core"
+    },
+    {
+     "name": "Arrowwood",
+     "code": "16-0954 TCX",
+     "hex": "#BC8D1F",
+     "group": "core"
+    },
+    {
+     "name": "Blue Indigo",
+     "code": "19-3928 TCX",
+     "hex": "#49516D",
+     "group": "core"
+    },
+    {
+     "name": "Dolphin",
+     "code": "16-2901 TCX",
+     "hex": "#9A9699",
+     "group": "core"
+    }
+   ]
+  }
+ ]
+}

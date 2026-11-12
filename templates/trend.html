@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ item.term|capitalize }} · The Daily Thread{% endblock %}
+{% block content %}
+<p class="crumb"><a href="{{ url_for('front') }}">Trend Radar</a> / {{ item.category }}</p>
+<article class="story">
+  <p class="kicker"><span class="tag tag-{{ item.label|lower }}">{{ item.label }}</span></p>
+  <h1>{{ item.term|capitalize }}</h1>
+  <p class="standfirst">
+    {% if item.yoy is not none %}Worldwide Google searches over the last 12 weeks are {{ item.yoy|pct }} against the same weeks last year{% else %}Not enough history for a year-on-year comparison{% endif %},
+    and sit at {{ '%.0f'|format(item.vs_peak * 100) }}% of the term's highest 12-week stretch since {{ first[:4] }}.
+  </p>
+
+  <figure class="chart">
+    <svg viewBox="-4 -4 768 248" role="img" aria-label="Weekly Google search interest for {{ item.term }} from {{ first }} to {{ last }}, scaled 0 to 100 where 100 is the peak week">
+      <rect class="band" x="{{ prior_x }}" y="0" width="{{ band }}" height="220"/>
+      <rect class="band now" x="{{ recent_x }}" y="0" width="{{ band }}" height="220"/>
+      {% for x, y in years %}<line class="grid" x1="{{ x }}" x2="{{ x }}" y1="0" y2="220"/><text class="axis" x="{{ x + 4 }}" y="238">{{ y }}</text>{% endfor %}
+      <path class="line" d="{{ path }}"/>
+    </svg>
+    <figcaption>Weekly search interest, {{ first }} to {{ last }} (Google's 0 to 100 scale, 100 = this term's busiest week). Shaded: the last 12 weeks and the same weeks a year earlier, which the label compares.</figcaption>
+  </figure>
+
+  <table class="signals">
+    <caption>Signals behind the label</caption>
+    <tbody>
+      <tr><th scope="row">Last 12 weeks, mean interest</th><td>{{ item.recent }}</td></tr>
+      <tr><th scope="row">Same weeks last year</th><td>{{ item.prior if item.prior is not none else 'n/a' }}</td></tr>
+      <tr><th scope="row">Year-on-year change</th><td>{{ item.yoy|pct }}</td></tr>
+      <tr><th scope="row">Momentum (slope of last 12 weeks, per week)</th><td>{{ item.momentum|pct }}</td></tr>
+      <tr><th scope="row">Share of five-year high</th><td>{{ '%.0f'|format(item.vs_peak * 100) }}%</td></tr>
+      <tr><th scope="row">Wikipedia page views, last 3 months vs a year earlier</th><td>{% if item.wiki %}{{ item.wiki_yoy|pct }} (<a href="https://en.wikipedia.org/wiki/{{ item.wiki }}">{{ item.wiki|replace('_', ' ') }}</a>){% else %}No article tracked{% endif %}</td></tr>
+    </tbody>
+  </table>
+  {% if item.low_volume %}<p class="note">Low search volume: small numbers on Google's scale move a lot, so treat this label with care.</p>{% endif %}
+  <p><a class="button" href="{{ url_for('check', term=item.slug) }}">Thinking of buying into {{ item.term }}?</a></p>
+</article>
+{% endblock %}

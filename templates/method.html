@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}How It Works · The Daily Thread{% endblock %}
+{% block content %}
+<article class="story prose">
+  <p class="kicker">How it works</p>
+  <h1>Rules, not vibes</h1>
+  <p class="standfirst">Every label on this site comes from a written rule applied to public data. Here is the whole recipe.</p>
+
+  <h2>The data</h2>
+  <ul>
+    <li><strong>Google Trends.</strong> Weekly worldwide search interest for each tracked term over five years, fetched one term at a time so each series is on its own 0 to 100 scale (100 is that term's busiest week). The unfinished current week is dropped.</li>
+    <li><strong>Wikipedia page views.</strong> Monthly views of the matching English article, from the official Wikimedia API. A second, independent signal: when it points the same way as Google, the label is sturdier.</li>
+    <li><strong>Pantone season palettes.</strong> Colour names, codes and chip colours from Pantone's New York Fashion Week Color Trend Reports, four seasons in a row.</li>
+  </ul>
+  <p>Each refresh is saved as a dated snapshot, so the site shows the last good data even when Google blocks automated requests.</p>
+
+  <h2>The trend label</h2>
+  <p>From the weekly series:</p>
+  <ul>
+    <li><strong>Year-on-year change</strong>: mean of the last 12 weeks against the same 12 weeks a year earlier. Comparing the same weeks cancels out seasons (boots always rise in October).</li>
+    <li><strong>Share of five-year high</strong>: the last 12 weeks against the busiest 12-week stretch in the series.</li>
+  </ul>
+  <table class="signals">
+    <caption>Rules, checked in this order</caption>
+    <tbody>
+      <tr><th scope="row"><span class="tag tag-rising">Rising</span></th><td>up 25% or more on last year</td></tr>
+      <tr><th scope="row"><span class="tag tag-out">Out</span></th><td>down 25% or more and under 40% of its five-year high</td></tr>
+      <tr><th scope="row"><span class="tag tag-fading">Fading</span></th><td>down 10% or more</td></tr>
+      <tr><th scope="row"><span class="tag tag-peaking">Peaking</span></th><td>at 80% or more of its five-year high</td></tr>
+      <tr><th scope="row"><span class="tag tag-stable">Stable</span></th><td>everything else</td></tr>
+    </tbody>
+  </table>
+  <p>Terms averaging under 5 on Google's scale are flagged low volume: one viral week can swing them.</p>
+
+  <h2>Colours</h2>
+  <p>Nobody searches for &ldquo;Arabian Spice&rdquo;. Each Pantone colour is matched to the nearest of about forty everyday colour words (&ldquo;rust&rdquo;, &ldquo;sage green&rdquo;) by distance in CIELAB, a colour space built to match human perception. Search interest for &ldquo;&lt;word&gt; outfit&rdquo; during the season is compared with the same dates a year earlier. The palette summary uses HSL lightness and saturation; a colour counts as neutral below 12% saturation and as warm when its hue sits in the reds, oranges and yellows.</p>
+
+  <h2>Limits</h2>
+  <ul>
+    <li>Search interest measures curiosity, not sales. A term can be searched because people are mocking it.</li>
+    <li>Google Trends numbers are sampled and rounded, so small terms are noisy. Some weeks show the same short spike across unrelated terms (mid-February 2026 is one); comparing 12-week averages keeps a single odd week from deciding a label.</li>
+    <li>The term list is curated by hand and worldwide only; it is easy to edit in <code>data/terms.json</code>.</li>
+    <li>pytrends is an unofficial, archived library. If Google changes its site, refreshes will fail and the last snapshot stays up.</li>
+  </ul>
+</article>
+{% endblock %}

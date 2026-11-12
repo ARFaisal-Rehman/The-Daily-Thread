@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Should I Buy It? · The Daily Thread{% endblock %}
+{% block content %}
+{% set pre = request.form.term or request.args.term %}
+<section class="lead">
+  <article>
+    <p class="kicker">Should I buy it?</p>
+    <h1>Five questions before the checkout</h1>
+    <p class="standfirst">Answer honestly. The score adds and removes points for how often you'll wear it, what it goes with, what you already own, and where its style sits on the trend radar. Every point is explained.</p>
+  </article>
+</section>
+
+<div class="two-col">
+  <form class="card form" method="post" aria-labelledby="q-h">
+    <h2 id="q-h">The piece</h2>
+    <label for="item">What is it?</label>
+    <input id="item" name="item" maxlength="80" required placeholder="e.g. Barrel-leg jeans" value="{{ request.form.item }}">
+    <label for="kind">Type</label>
+    <select id="kind" name="kind">{% for k in kinds %}<option {% if request.form.kind == k %}selected{% endif %}>{{ k }}</option>{% endfor %}</select>
+    <label for="term">Which style is it? <span class="hint">(links it to the radar)</span></label>
+    <select id="term" name="term">
+      <option value="">Not on the radar</option>
+      {% for s in styles|sort(attribute='term') %}<option value="{{ s.slug }}" {% if pre == s.slug %}selected{% endif %}>{{ s.term }} ({{ s.label }})</option>{% endfor %}
+    </select>
+    <label for="wears">How many times a month will you wear it?</label>
+    <input id="wears" name="wears" type="number" min="0" max="31" required value="{{ request.form.wears or 2 }}">
+    <fieldset>
+      <legend>Does it go with at least three things you own?</legend>
+      <label class="inline"><input type="radio" name="pairs" value="yes" {% if request.form.pairs != 'no' %}checked{% endif %}> Yes</label>
+      <label class="inline"><input type="radio" name="pairs" value="no" {% if request.form.pairs == 'no' %}checked{% endif %}> No</label>
+    </fieldset>
+    <fieldset>
+      <legend>Does it fill a gap in your wardrobe?</legend>
+      <label class="inline"><input type="radio" name="gap" value="yes" {% if request.form.gap == 'yes' %}checked{% endif %}> Yes</label>
+      <label class="inline"><input type="radio" name="gap" value="no" {% if request.form.gap != 'yes' %}checked{% endif %}> No</label>
+    </fieldset>
+    <fieldset>
+      <legend>Is part of the pull that everyone's wearing it?</legend>
+      <label class="inline"><input type="radio" name="hype" value="yes" {% if request.form.hype == 'yes' %}checked{% endif %}> Yes</label>
+      <label class="inline"><input type="radio" name="hype" value="no" {% if request.form.hype != 'yes' %}checked{% endif %}> No</label>
+    </fieldset>
+    <button class="button" type="submit">Score it</button>
+  </form>
+
+  <section aria-live="polite">
+    {% if result %}
+    <div class="card verdict verdict-{{ result.verdict|lower|replace(' ', '-') }}">
+      <p class="kicker">{{ result.item }}</p>
+      <p class="score"><span>{{ result.score }}</span>/100</p>
+      <h2>{{ result.verdict }}</h2>
+      <ul>{% for r in result.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+    </div>
+    {% else %}
+    <p class="empty">Your score and the reasons behind it will appear here.</p>
+    {% endif %}
+    {% if history %}
+    <h2 class="small-head">Recent checks</h2>
+    <ul class="history">{% for h in history %}<li><span>{{ h.item }}</span><span>{{ h.verdict }} &middot; {{ h.score }}</span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}The Daily Thread{% endblock %}</title>
+  <meta name="description" content="A fashion trend radar from live Google Trends and Wikipedia data: what is rising, what is fading, and the colours of the season.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Public+Sans:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="dateline">
+    <span>{% if as_of %}Search data as of {{ as_of }}{% else %}No data yet{% endif %}</span>
+    <span>Worldwide &middot; Google Trends + Wikipedia</span>
+  </div>
+  <a class="nameplate" href="{{ url_for('front') }}">The Daily Thread</a>
+  <nav aria-label="Sections">
+    {% for ep, label in [('front', 'Trend Radar'), ('colours', 'Colours of the Season'), ('wardrobe', 'My Wardrobe'), ('check', 'Should I Buy It?'), ('method', 'How It Works')] %}
+    <a href="{{ url_for(ep) }}" {% if endpoint == ep %}aria-current="page"{% endif %}>{{ label }}</a>
+    {% endfor %}
+  </nav>
+</header>
+<main id="main" class="wrap">
+{% block content %}{% endblock %}
+</main>
+<footer class="wrap foot">
+  <p>Search interest from Google Trends (via pytrends) and page views from the Wikimedia REST API. Season colours from Pantone's New York Fashion Week Color Trend Reports (names, codes and chip colours only). Labels are rules, not predictions; see <a href="{{ url_for('method') }}">How It Works</a>.</p>
+  <p><a href="https://github.com/ARFaisal-Rehman/The-Daily-Thread">Source on GitHub</a></p>
+</footer>
+</body>
+</html>

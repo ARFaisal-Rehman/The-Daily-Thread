@@ -1,0 +1,6 @@
+flask>=3.0
+numpy>=1.26
+pandas>=2.0
+pytrends==4.9.2
+requests>=2.31
+pytest>=8.0
