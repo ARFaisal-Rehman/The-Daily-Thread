@@ -100,7 +100,7 @@ Terms averaging under 5 on Google's scale are flagged low volume. If the term ha
 
 From the committed snapshot of 13 November 2026 (worldwide). Reproduce with `python scripts/summarise.py`.
 
-**Coverage.** 33 of 36 terms (Google blocked *barn jacket*, *bomber jacket* and *trench coat* after repeated retries), 17 of 36 colour words, 11 Wikipedia articles. Missing data shows as "n/a" on the site; the next refresh fills it.
+**Coverage.** 33 of 36 terms (Google blocked *barn jacket*, *bomber jacket* and *trench coat* after repeated retries), 17 of 36 colour words, 15 Wikipedia articles. Missing data shows as "n/a" on the site; the next refresh fills it.
 
 **Labels:** 11 Rising, 2 Peaking, 15 Stable, 2 Fading, 3 Out.
 
@@ -112,7 +112,7 @@ From the committed snapshot of 13 November 2026 (worldwide). Reproduce with `pyt
 | sheer dress | +72% | | adidas samba | -14% (Fading) |
 | maxi skirt | +62% | | clean girl aesthetic | -11% (Fading) |
 
-**The second signal disagrees more often than it agrees.** Wikipedia views point the same way as Google searches for only 4 of the 11 terms with an article (for example *adidas samba*: Google -14%, Wikipedia -42%; *skinny jeans*: Google +38%, Wikipedia -26%). Encyclopaedia readers and shoppers are different audiences, so the site shows the Wikipedia figure beside each label instead of mixing it into the label.
+**The second signal disagrees more often than it agrees.** Wikipedia views point the same way as Google searches for only 5 of the 13 terms with both signals (for example *adidas samba*: Google -14%, Wikipedia -42%; *skinny jeans*: Google +38%, Wikipedia -26%). Encyclopaedia readers and shoppers are different audiences, so the site shows the Wikipedia figure beside each label instead of mixing it into the label.
 
 **Colours of the season (Autumn/Winter 2026/27).** Searches for "&lt;word&gt; outfit" from 1 September to 1 November 2026 against the same weeks of 2025:
 
