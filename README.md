@@ -40,7 +40,7 @@
 
 ## Overview
 
-The Daily Thread reads public search data and tells you, in newspaper form:
+The Daily Thread reads public search data and tells you, in newspaper form (Today's Edition at `/edition` puts the lead stories of every section on one page):
 
 1. **What is in and what is out.** 36 fashion terms from the project's own Fashion Dictionary (each with a definition, other names and a place in a category tree), labelled Rising, Emerging, Peaking, Stable, Fading or Out from five years of weekly Google Trends data, with a confidence level, Wikipedia page views as a second opinion, and every rule backtested.
 2. **The colours of the season.** Pantone's New York Fashion Week palette for the current season, whether people are actually searching for those colours compared with a year ago, what changed from last season's palette, and a preview of next season.
@@ -195,6 +195,10 @@ The page keeps two rules:
 
 Headlines come from the WWD, Business of Fashion and Vogue RSS feeds: only the headline, link, date and feed name are stored, the archive grows with each refresh (90 days kept, duplicates merged by link), and a brand counts as mentioned when its name appears in a headline, ignoring accents, minus phrases such as "Celine Dion". Wikipedia views are down for almost every brand year on year, so the page shows the median brand beside them.
 
+### Editions
+
+Each published snapshot is an edition. `/edition` is the latest, `/edition/<day>` any earlier one and `/editions` the archive. `thread/edition.py` writes the front page from that day's data only: the biggest riser and faller among terms with enough volume (none is invented when nothing rises or falls), up to three more Rising or Emerging terms, the brands with the largest search moves in each direction (brands with a broken or held series never qualify), and the newest headlines that name something tracked. Hand-entered facts are not stored per day, so an edition shows the Lyst ranking only if it was entered on or before the edition's date.
+
 ### News Desk
 
 `/news` shows the headline archive by day. `thread/news.py` merges a headline that several feeds ran (by its words, ignoring punctuation and case) and tags it with every brand, owner group and reviewed dictionary term it names, using the same whole-word, accent-insensitive matching as Brand Watch; proposed dictionary terms are left out because words like "dot" and "check" would tag nonsense. Tags and feeds work as filters, and a side panel counts the most-mentioned tags over 30 days. On the first archive, 139 headlines, none named a tracked trend term: trade headlines are about companies, not "barrel jeans", which is itself a finding.
@@ -243,7 +247,7 @@ Refresh brands and news alone with `python scripts/refresh_trends.py --brands`; 
 - The social side of the original idea: a feed where people post outfits and react, on top of the existing SQLite store. The original virtual pet is retired.
 - Review the 277 proposed terms: check search volume (with the official Google Trends API once access is granted), write definitions and promote the ones worth tracking. Bags, accessories and jewellery still need a source.
 - Brand Watch, next part: GDELT news volume once its rate limit allows (one request per 5 seconds, cached daily), brand pages, and share prices if Alpha Vantage covers Paris-listed stocks.
-- News Desk, next part: GDELT discovery once its rate limit allows, more feeds after reading each publisher's terms, and an edition front page that pulls the radar, Brand Watch and the desk together.
+- News Desk, next part: GDELT discovery once its rate limit allows, more feeds after reading each publisher's terms, and and a weekly scheduled refresh so a new edition appears without anyone running a script.
 
 ## Author
 

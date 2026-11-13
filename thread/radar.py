@@ -165,6 +165,20 @@ def _load(path: str, mtime: float) -> Radar:
     return Radar(Path(path))
 
 
+def published_days(folder: Path = DATA / "snapshots") -> List[str]:
+    """Every published snapshot day, newest first: the edition archive."""
+    return sorted((p.stem for p in Path(folder).glob("*.json") if re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.stem)),
+                  reverse=True)
+
+
+def get_radar_for(folder: Path, day: str) -> Optional[Radar]:
+    """The radar of one past edition, or None for an unknown or malformed day."""
+    if day not in published_days(folder):
+        return None
+    path = Path(folder) / f"{day}.json"
+    return _load(str(path), path.stat().st_mtime)
+
+
 def get_radar(folder: Path = DATA / "snapshots") -> Optional[Radar]:
     snap = latest_published(folder)
     if snap is None:

@@ -16,9 +16,10 @@ from flask import Flask, abort, g, redirect, render_template, request, session, 
 
 from thread.brands import BrandWatch
 from thread.brands import load as load_brands
+from thread.edition import build as build_edition
 from thread.news import desk
 from thread.colours import nearest_family
-from thread.radar import get_radar, sparkline
+from thread.radar import get_radar, get_radar_for, published_days, sparkline
 from thread.trends import METHODOLOGY_VERSION
 
 ROOT = Path(__file__).resolve().parent
@@ -164,18 +165,44 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
                                groups=watch.data.groups, news_days=watch.news_days,
                                wiki_median=watch.wiki_median)
 
+    def news_tags(r, data) -> list:
+        """Brands, owner groups (unless named like a brand) and reviewed dictionary terms."""
+        brand_names = {b.name for b in data.brands}
+        return ([{"slug": b.slug, "name": b.name, "kind": "brand", "names": [b.name], "exclude": b.news_exclude}
+                 for b in data.brands]
+                + [{"slug": gid, "name": g["name"], "kind": "group", "names": [g["name"]]}
+                   for gid, g in data.groups.items() if not g["name"].startswith(tuple(brand_names))]
+                + [{"slug": t["slug"], "name": t["name"], "kind": "term",
+                    "names": [t["name"], t["term"], *r.dictionary.by_id[t["id"]].aliases]} for t in r.terms])
+
+    def edition_page(r):
+        data = load_brands()
+        watch = BrandWatch(r.snap, data, today=r.as_of)
+        items = [i for f in r.snap.get("news", {}).values() for i in f.get("items", [])]
+        stories = [s for _, day in desk(items, news_tags(r, data), today=r.as_of)["days"] for s in day]
+        ed = build_edition(r.as_of, r.items, watch.rows(), data.lyst, stories)
+        return render_template("edition.html", ed=ed, latest=r.as_of == published_days(app.config["SNAPSHOTS"])[0])
+
+    @app.route("/edition")
+    def edition_latest():
+        return edition_page(radar())
+
+    @app.route("/edition/<day>")
+    def edition(day: str):
+        r = get_radar_for(app.config["SNAPSHOTS"], day)
+        if r is None:
+            abort(404)
+        return edition_page(r)
+
+    @app.route("/editions")
+    def editions():
+        return render_template("editions.html", days=published_days(app.config["SNAPSHOTS"]))
+
     @app.route("/news")
     def news():
         r = radar()
         data = load_brands()
-        brand_names = {b.name for b in data.brands}
-        tags = ([{"slug": b.slug, "name": b.name, "kind": "brand", "names": [b.name], "exclude": b.news_exclude}
-                 for b in data.brands]
-                + [{"slug": gid, "name": g["name"], "kind": "group", "names": [g["name"]]}
-                   for gid, g in data.groups.items() if g["name"] not in brand_names and not g["name"].startswith(
-                       tuple(brand_names))]
-                + [{"slug": t["slug"], "name": t["name"], "kind": "term",
-                    "names": [t["name"], t["term"], *r.dictionary.by_id[t["id"]].aliases]} for t in r.terms])
+        tags = news_tags(r, data)
         items = [i for f in r.snap.get("news", {}).values() for i in f.get("items", [])]
         tag, feed = request.args.get("tag") or None, request.args.get("feed") or None
         d = desk(items, tags, today=r.as_of, tag=tag, feed=feed)

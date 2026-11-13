@@ -19,7 +19,7 @@
   </div>
   <a class="nameplate" href="{{ url_for('front') }}">The Daily Thread</a>
   <nav aria-label="Sections">
-    {% for ep, label in [('front', 'Trend Radar'), ('colours', 'Colours of the Season'), ('wardrobe', 'My Wardrobe'), ('check', 'Should I Buy It?'), ('brands', 'Brand Watch'), ('news', 'News Desk'), ('dictionary', 'Dictionary'), ('method', 'How It Works')] %}
+    {% for ep, label in [('edition_latest', "Today's Edition"), ('front', 'Trend Radar'), ('colours', 'Colours of the Season'), ('wardrobe', 'My Wardrobe'), ('check', 'Should I Buy It?'), ('brands', 'Brand Watch'), ('news', 'News Desk'), ('dictionary', 'Dictionary'), ('method', 'How It Works')] %}
     <a href="{{ url_for(ep) }}" {% if endpoint == ep %}aria-current="page"{% endif %}>{{ label }}</a>
     {% endfor %}
   </nav>

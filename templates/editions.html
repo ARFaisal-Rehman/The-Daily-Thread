@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Editions · The Daily Thread{% endblock %}
+{% block content %}
+<section class="lead">
+  <article>
+    <p class="kicker">Archive</p>
+    <h1>Every edition</h1>
+    <p class="standfirst">One edition per published data refresh, each built only from the data of its day.</p>
+  </article>
+</section>
+{% if days %}
+<ul class="headlines">{% for d in days %}<li><a href="{{ url_for('edition', day=d) }}">{{ d|nice_date }}</a>{% if loop.first %} <span class="meta-inline">latest</span>{% endif %}</li>{% endfor %}</ul>
+{% else %}<p class="empty">No editions yet.</p>{% endif %}
+{% endblock %}

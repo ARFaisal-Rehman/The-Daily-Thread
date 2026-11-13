@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Edition of {{ ed.day|nice_date }} · The Daily Thread{% endblock %}
+{% block content %}
+<p class="kicker edition-date">{% if latest %}Today's edition{% else %}Archive edition{% endif %} &middot; {{ ed.day|nice_date }} &middot; <a href="{{ url_for('editions') }}">all editions</a></p>
+{% if not latest %}<p class="meta">This is an archived edition, built only from the data published on {{ ed.day|nice_date }}. The rest of the site shows the latest data.</p>{% endif %}
+
+<section class="lead">
+  <article class="edition-lead">
+    {% if ed.lead %}
+    <p class="kicker">Biggest riser</p>
+    <h1><a href="{{ url_for('trend', term_slug=ed.lead.slug) }}">{{ ed.lead.name }}: searches {{ ed.lead.yoy|pct }} on a year ago</a></h1>
+    <p class="standfirst">Labelled <strong class="tag tag-{{ ed.lead.label|lower }}">{{ ed.lead.label }}</strong>{% if ed.lead.confidence %}, {{ ed.lead.confidence|lower }} confidence{% endif %}. The last 12 weeks of worldwide Google searches against the same weeks a year earlier.</p>
+    {% else %}
+    <h1>No tracked term is up on a year ago</h1>
+    {% endif %}
+  </article>
+  {% if ed.faller %}
+  <article class="second">
+    <p class="kicker">Biggest faller</p>
+    <h2><a href="{{ url_for('trend', term_slug=ed.faller.slug) }}">{{ ed.faller.name }}: {{ ed.faller.yoy|pct }}</a></h2>
+    <p class="standfirst">Labelled <strong class="tag tag-{{ ed.faller.label|lower }}">{{ ed.faller.label }}</strong>.</p>
+  </article>
+  {% endif %}
+</section>
+
+<div class="edition-grid">
+  <section class="block" id="edition-trends">
+    <h2>Also rising</h2>
+    {% if ed.risers %}<ul class="headlines">{% for i in ed.risers %}<li><a href="{{ url_for('trend', term_slug=i.slug) }}">{{ i.name }}</a> <span class="meta-inline">{{ i.yoy|pct }} &middot; {{ i.label }}</span></li>{% endfor %}</ul>
+    {% else %}<p class="meta">Nothing else is labelled Rising or Emerging in this edition.</p>{% endif %}
+    <p class="meta"><a href="{{ url_for('front') }}">The full Trend Radar</a></p>
+  </section>
+
+  <section class="block" id="edition-brands">
+    <h2>Brand Watch</h2>
+    {% if ed.brands_up or ed.brands_down %}
+    <ul class="headlines">
+      {% for r in ed.brands_up %}<li>{{ r.name }} <span class="meta-inline">searches {{ r.yoy|pct }} &middot; {{ r.label }}</span></li>{% endfor %}
+      {% for r in ed.brands_down %}<li>{{ r.name }} <span class="meta-inline">searches {{ r.yoy|pct }} &middot; {{ r.label }}</span></li>{% endfor %}
+    </ul>
+    {% else %}<p class="meta">No brand search data in this edition.</p>{% endif %}
+    {% if ed.lyst %}<p class="meta"><a href="{{ ed.lyst.url }}">Lyst Index {{ ed.lyst.edition }}</a> top three: {% for r in ed.lyst.top %}{{ r.lyst_rank }}. {{ r.name }}{% if not loop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
+    <p class="meta"><a href="{{ url_for('brands') }}">Brand Watch</a></p>
+  </section>
+
+  <section class="block" id="edition-news">
+    <h2>From the News Desk</h2>
+    {% if ed.headlines %}
+    <ul class="headlines">{% for s in ed.headlines %}<li><a href="{{ s.link }}" rel="noopener">{{ s.title }}</a> <span class="meta-inline">{{ s.feed }}, {{ s.published|nice_date }} &middot; {{ s.tags|map(attribute='name')|join(', ') }}</span></li>{% endfor %}</ul>
+    {% else %}<p class="meta">No headline in this edition names a tracked brand, group or term.</p>{% endif %}
+    <p class="meta"><a href="{{ url_for('news') }}">The full News Desk</a></p>
+  </section>
+</div>
+
+<p class="coverage">In this edition: {{ ed.stats.terms }} trend terms with data, {{ ed.stats.brands }} brands with a search label, {{ ed.stats.stories }} headlines.</p>
+{% endblock %}
