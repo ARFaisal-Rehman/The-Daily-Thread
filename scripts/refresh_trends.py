@@ -1,6 +1,7 @@
 """Fetch fresh trend data and publish it as data/snapshots/<today>.json.
 
-Run weekly:  python scripts/refresh_trends.py
+Run weekly:  python scripts/refresh_trends.py            (terms, colour words and brands)
+             python scripts/refresh_trends.py --brands   (brands and news feeds only; the rest is carried forward)
 While it runs, results go to data/snapshots/drafts/<today>.json (resumable: an interrupted run
 picks up where it stopped). At the end the draft is published, merged with the last good
 snapshot, so anything Google refused this time is carried forward and marked as older data.
@@ -17,8 +18,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from thread.brands import load as load_brands  # noqa: E402
 from thread.colours import nearest_family  # noqa: E402
 from thread.dictionary import load as load_dictionary  # noqa: E402
+from thread.providers.rss import FEEDS  # noqa: E402
 from thread.refresh import run  # noqa: E402
 
 DATA = ROOT / "data"
@@ -26,10 +29,14 @@ PAUSE = float(os.environ.get("TRENDS_PAUSE", 3))  # seconds between Google queri
 
 
 def main() -> None:
-    terms = load_dictionary().tracked()       # active terms from data/dictionary.json
-    palettes = json.loads((DATA / "palettes.json").read_text(encoding="utf-8"))
-    families = sorted({nearest_family(c["hex"])[0] for s in palettes["seasons"] for c in s["colours"]})
-    report = run(DATA / "snapshots", terms, families, pause=PAUSE)
+    brands = [{"topic": b.search, "wiki": b.wiki} for b in load_brands().brands]
+    if "--brands" in sys.argv:
+        terms, families = [], []
+    else:
+        terms = load_dictionary().tracked()       # active terms from data/dictionary.json
+        palettes = json.loads((DATA / "palettes.json").read_text(encoding="utf-8"))
+        families = sorted({nearest_family(c["hex"])[0] for s in palettes["seasons"] for c in s["colours"]})
+    report = run(DATA / "snapshots", terms, families, brands=brands, feeds=FEEDS, pause=PAUSE)
     m = report["run"]
     print(f"\npublished {report['day']}.json: {m['ok']} of {m['attempted']} fetched this run, "
           f"{report['carried']} series carried forward from {report['previous']}")

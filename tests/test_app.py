@@ -120,7 +120,7 @@ def test_trend_page_shows_the_dictionary_entry(client):
 
 def test_carried_forward_terms_say_how_old_they_are(client):
     html = client.get("/").get_data(as_text=True)
-    assert "data from 6 Nov 2026 (last refresh failed)" in html
+    assert "data from 6 Nov 2026" in html
 
 
 def test_front_page_sorts_terms_into_in_and_out(client):
@@ -167,3 +167,31 @@ def test_dictionary_page_lists_proposed_terms_separately_with_credit(client):
 def test_dictionary_search_includes_proposed_terms(client):
     html = client.get("/dictionary?q=batwing").get_data(as_text=True)
     assert "Dolman sleeve" in html and "proposed" in html
+
+
+def test_brand_watch_page(client):
+    html = client.get("/brands").get_data(as_text=True)
+    assert "Brand Watch" in html
+    assert "Lyst Index Q3 2026" in html and "https://www.lyst.com/the-lyst-index/Q3-26/" in html
+    assert html.index("Prada") < html.index("Chanel")                          # Lyst order
+    assert "no search data yet" in html                                       # fixture has no brand series
+    assert "not ranked" in html                                               # Louis Vuitton, Hermes
+    assert "not collected yet" in html                                        # no news archive in the fixture
+
+
+def test_brand_watch_keeps_money_separate_and_scoped(client):
+    html = client.get("/brands").get_data(as_text=True)
+    money = html.split('id="company-figures"')[1]
+    assert "Prada Group" in money and "group" in money and "segment" in money
+    assert "Organic growth excludes Versace" in money
+    assert "+15%" in money and "constant currency" in money                   # growth named the company's way
+    assert "pradagroup.com" in money                                          # every figure links its source
+
+
+def test_nav_links_brand_watch(client):
+    assert 'href="/brands"' in client.get("/").get_data(as_text=True)
+
+
+def test_stale_marker_does_not_blame_a_failure(client):
+    html = client.get("/").get_data(as_text=True)
+    assert "data from 6 Nov 2026 (not updated in the last refresh)" in html

@@ -57,3 +57,32 @@ def test_run_resumes_from_todays_draft(tmp_path):
     run(tmp_path, TERMS[:1], [], google=counting, wiki=fake_wiki, today="2026-11-13", pause=0, publish_at_end=False)
     run(tmp_path, TERMS[:1], [], google=counting, wiki=fake_wiki, today="2026-11-13", pause=0)
     assert calls == ["barrel jeans"]                                           # second run skipped it
+
+
+def test_brands_go_to_their_own_bucket_keyed_by_topic(tmp_path):
+    brands = [{"topic": "/m/033j5y", "wiki": "Prada"}]
+    seen = []
+
+    def google(query, **_):
+        seen.append(query)
+        return fake_google(query)
+
+    run(tmp_path, [], [], brands=brands, google=google, wiki=fake_wiki, today="2026-11-13", pause=0)
+    out = json.loads((tmp_path / "2026-11-13.json").read_text(encoding="utf-8"))
+    assert seen == ["/m/033j5y"]
+    assert "/m/033j5y" in out["brands"] and out["google"] == {}
+    assert "wiki:Prada" in out["run"]["failed"]                               # brand articles use the wiki bucket
+
+
+def test_second_run_same_day_only_fills_gaps(tmp_path):
+    run(tmp_path, TERMS[:1], [], google=fake_google, wiki=fake_wiki, today="2026-11-13", pause=0)   # publishes
+    calls = []
+
+    def counting(query, **_):
+        calls.append(query)
+        return fake_google(query)
+
+    run(tmp_path, TERMS, [], google=counting, wiki=fake_wiki, today="2026-11-13", pause=0)
+    assert calls == ["trench coat"]                       # barrel jeans was already collected today
+    out = json.loads((tmp_path / "2026-11-13.json").read_text(encoding="utf-8"))
+    assert out["google"]["barrel jeans"]["collected_at"] == "2026-11-13"

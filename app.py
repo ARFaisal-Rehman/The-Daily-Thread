@@ -14,6 +14,7 @@ from pathlib import Path
 
 from flask import Flask, abort, g, redirect, render_template, request, session, url_for
 
+from thread.brands import BrandWatch
 from thread.colours import nearest_family
 from thread.radar import get_radar, sparkline
 from thread.trends import METHODOLOGY_VERSION
@@ -151,6 +152,15 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         return render_template("dictionary.html", groups=groups, proposed=proposed, q=q,
                                count=sum(map(len, groups.values())), proposed_count=sum(map(len, proposed.values())),
                                radar={i["slug"]: i for i in r.items})
+
+    @app.route("/brands")
+    def brands():
+        r = radar()
+        watch = BrandWatch(r.snap, today=r.as_of)
+        figures = watch.data.financials
+        return render_template("brands.html", rows=watch.rows(), lyst=watch.data.lyst, figures=figures,
+                               groups=watch.data.groups, news_days=watch.news_days,
+                               wiki_median=watch.wiki_median)
 
     @app.route("/colours")
     def colours():

@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from typing import Dict, Optional
 
-BUCKETS = ("google", "colours", "wiki")
+BUCKETS = ("google", "colours", "wiki", "brands", "news")
 
 
 def draft_path(folder: Path, day: str) -> Path:

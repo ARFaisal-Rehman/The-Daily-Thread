@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel><title>Sample fashion feed</title>
+<item><title>Prada Back on Top as Celine Climbs</title><link>https://example.com/a</link><pubDate>Fri, 13 Nov 2026 11:04:11 +0000</pubDate><description>Long article text we must not store.</description></item>
+<item><title>Celine Dion Announces Tour</title><link>https://example.com/b</link><pubDate>Thu, 12 Nov 2026 09:00:00 +0000</pubDate></item>
+<item><title>Inside Chloe's New Store and Hermes Results</title><link>https://example.com/c</link><pubDate>Wed, 11 Nov 2026 08:00:00 GMT</pubDate></item>
+<item><title>No date on this one</title><link>https://example.com/d</link></item>
+</channel></rss>

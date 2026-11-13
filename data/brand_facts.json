@@ -1,0 +1,234 @@
+{
+ "about": "Hand-entered facts for Brand Watch, each with its source. Lyst ranks are Lyst's own quarterly ranking (demand, search, social and editorial signals); 'move' is the change Lyst reports against the previous quarter. Financial figures are copied from company releases and keep their scope: 'group' is the whole company, 'segment' a division holding several brands, 'brand' one label. Growth is a fraction (-0.04 is -4%) under the name the company uses: reported, organic, comparable or constant_fx.",
+ "lyst": [
+  {
+   "edition": "Q3 2026",
+   "url": "https://www.lyst.com/the-lyst-index/Q3-26/",
+   "retrieved": "2026-11-13",
+   "ranks": [
+    {
+     "rank": 1,
+     "brand": "br-001",
+     "move": 5
+    },
+    {
+     "rank": 2,
+     "brand": "br-002",
+     "move": -1
+    },
+    {
+     "rank": 3,
+     "brand": "br-003",
+     "move": -1
+    },
+    {
+     "rank": 4,
+     "brand": "br-004",
+     "move": 1
+    },
+    {
+     "rank": 5,
+     "brand": "br-005",
+     "move": -1
+    },
+    {
+     "rank": 6,
+     "brand": "br-006",
+     "move": -3
+    },
+    {
+     "rank": 7,
+     "brand": "br-007",
+     "move": 1
+    },
+    {
+     "rank": 8,
+     "brand": "br-008",
+     "move": -1
+    },
+    {
+     "rank": 9,
+     "brand": "br-009",
+     "move": 2
+    },
+    {
+     "rank": 10,
+     "brand": "br-010",
+     "move": 5
+    },
+    {
+     "rank": 11,
+     "brand": "br-011",
+     "move": 3
+    },
+    {
+     "rank": 12,
+     "brand": "br-012",
+     "move": -3
+    },
+    {
+     "rank": 13,
+     "brand": "br-013",
+     "move": -3
+    },
+    {
+     "rank": 14,
+     "brand": "br-014",
+     "move": -2
+    },
+    {
+     "rank": 15,
+     "brand": "br-015",
+     "move": 1
+    },
+    {
+     "rank": 16,
+     "brand": "br-016",
+     "move": "new"
+    },
+    {
+     "rank": 17,
+     "brand": "br-017",
+     "move": 0
+    },
+    {
+     "rank": 18,
+     "brand": "br-018",
+     "move": "re-entry"
+    },
+    {
+     "rank": 19,
+     "brand": "br-019",
+     "move": 1
+    },
+    {
+     "rank": 20,
+     "brand": "br-020",
+     "move": "new"
+    }
+   ]
+  }
+ ],
+ "financials": [
+  {
+   "group": "lvmh",
+   "scope": "segment",
+   "label": "LVMH Fashion & Leather Goods",
+   "covers": "Louis Vuitton, Dior, Celine, Loewe and LVMH's other fashion houses",
+   "measure": "revenue",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": 26391,
+   "prior_m": 27611,
+   "growth": {
+    "reported": -0.04,
+    "organic": -0.02
+   },
+   "note": "Third quarter alone: -5% organic.",
+   "source": "https://www.lvmh.com/en/publications/continued-growth-in-the-third-quarter-of-2026"
+  },
+  {
+   "group": "kering",
+   "scope": "group",
+   "label": "Kering",
+   "covers": "all Kering houses, eyewear and other",
+   "measure": "revenue",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": 10565,
+   "prior_m": null,
+   "growth": {
+    "reported": -0.02,
+    "comparable": 0.0
+   },
+   "source": "https://www.kering.com/en/news/revenue-for-the-3rd-quarter-of-2026/"
+  },
+  {
+   "group": "kering",
+   "scope": "brand",
+   "brand": "br-004",
+   "label": "Gucci",
+   "covers": "Gucci only",
+   "measure": "revenue",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": 4048,
+   "prior_m": 4370,
+   "growth": {
+    "reported": -0.07,
+    "comparable": -0.05
+   },
+   "note": "Third quarter alone: -6% comparable.",
+   "source": "https://www.kering.com/en/news/revenue-for-the-3rd-quarter-of-2026/"
+  },
+  {
+   "group": "prada-group",
+   "scope": "group",
+   "label": "Prada Group",
+   "covers": "Prada, Miu Miu, Church's, Car Shoe and, since its acquisition, Versace",
+   "measure": "net revenues",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": 4541,
+   "prior_m": 4070,
+   "growth": {
+    "reported": 0.12,
+    "constant_fx": 0.15,
+    "organic": 0.04
+   },
+   "note": "Organic growth excludes Versace (EUR 441m in the period): most of the headline growth is an acquisition.",
+   "source": "https://www.pradagroup.com/content/dam/pradagroup/documents/investors/9M-2026/Prada-Group-9M26-Press-release.pdf"
+  },
+  {
+   "group": "prada-group",
+   "scope": "brand",
+   "brand": "br-001",
+   "label": "Prada",
+   "covers": "Prada label, own stores only",
+   "measure": "retail sales",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": null,
+   "prior_m": null,
+   "growth": {
+    "constant_fx": 0.02
+   },
+   "note": "Third quarter: +1%.",
+   "source": "https://www.pradagroup.com/content/dam/pradagroup/documents/investors/9M-2026/Prada-Group-9M26-Press-release.pdf"
+  },
+  {
+   "group": "prada-group",
+   "scope": "brand",
+   "brand": "br-003",
+   "label": "Miu Miu",
+   "covers": "Miu Miu label, own stores only",
+   "measure": "retail sales",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": null,
+   "prior_m": null,
+   "growth": {
+    "constant_fx": 0.01
+   },
+   "note": "Third quarter: -3%, against +41% growth a year earlier.",
+   "source": "https://www.pradagroup.com/content/dam/pradagroup/documents/investors/9M-2026/Prada-Group-9M26-Press-release.pdf"
+  },
+  {
+   "group": "hermes",
+   "scope": "group",
+   "label": "Hermès International",
+   "covers": "Hermès only: a single-brand house, so the group figure is the brand figure",
+   "measure": "revenue",
+   "period": "9M 2026",
+   "currency": "EUR",
+   "value_m": 12261,
+   "prior_m": null,
+   "growth": {
+    "reported": 0.03,
+    "constant_fx": 0.06
+   },
+   "note": "Value is the total of the release's revenue-by-sector table (headline: EUR 12.3bn).",
+   "source": "https://finance.hermes.com/en/publications/third-quarter-2026-revenue/"
+  }
+ ]
+}

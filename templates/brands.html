@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Brand Watch · The Daily Thread{% endblock %}
+{% set kinds = {'reported': 'reported', 'organic': 'organic', 'comparable': 'comparable', 'constant_fx': 'constant currency'} %}
+{% block content %}
+<section class="lead">
+  <article>
+    <p class="kicker">Brand Watch</p>
+    <h1>Who people are looking at</h1>
+    <p class="standfirst">Attention, not sales: worldwide Google searches for each brand, Wikipedia page views and the <a href="{{ lyst.url }}">Lyst Index {{ lyst.edition }}</a>. Company money is further down, kept apart, because a group's growth is not its brands' growth.</p>
+  </article>
+</section>
+
+<section class="block">
+  <h2>Attention</h2>
+  <div class="table-scroll">
+  <table class="signals brand-table">
+    <caption>Search label and change on a year ago use the same rules as the Trend Radar; ambiguous names are tracked as Google Trends topics, so &ldquo;Celine&rdquo; is the brand and not the singer. A series with a sudden jump that is not seasonal gets no label: it usually means Google remapped the topic.</caption>
+    <thead><tr><th scope="col">Brand</th><th scope="col">Lyst {{ lyst.edition }}</th><th scope="col">Search</th><th scope="col">Searches vs a year ago</th><th scope="col">Wikipedia vs a year ago</th><th scope="col">Headlines, last {{ news_days }} days</th><th scope="col">Owner</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+    <tr id="{{ r.slug }}">
+      <th scope="row">{{ r.name }}</th>
+      <td>{% if r.lyst_rank %}{{ r.lyst_rank }} <span class="meta-inline">{% if r.lyst_move in ['new', 're-entry'] %}{{ r.lyst_move }}{% elif r.lyst_move == 0 %}no change{% else %}{{ '%+d'|format(r.lyst_move) }}{% endif %}</span>{% else %}<span class="meta-inline">not ranked</span>{% endif %}</td>
+      <td>{% if r.unreliable %}<span class="meta-inline">no label: {{ r.unreliable }}</span>{% elif r.label %}<span class="tag tag-{{ r.label|lower }}">{{ r.label }}</span>{% if r.confidence %} <span class="meta-inline">{{ r.confidence|lower }} confidence</span>{% endif %}{% if r.low_volume %} <span class="meta-inline">low volume</span>{% endif %}{% else %}<span class="meta-inline">no search data yet</span>{% endif %}</td>
+      <td class="num">{{ r.yoy|pct if r.yoy is not none else '' }}{% if r.carried_from %} <span class="stale">data from {{ r.collected_at|nice_date }}</span>{% endif %}</td>
+      <td class="num">{{ r.wiki_yoy|pct if r.wiki_yoy is not none else '' }}</td>
+      <td class="num">{% if r.news_count is none %}<span class="meta-inline">not collected yet</span>{% elif r.news_count %}<a href="#news-{{ r.slug }}">{{ r.news_count }}</a>{% else %}0{% endif %}</td>
+      <td>{{ r.group_name }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% if wiki_median is not none %}<p class="meta">Wikipedia views: the median brand is {{ wiki_median|pct }} on a year ago, so read each brand against that rather than on its own.</p>{% endif %}
+  <p class="meta">Lyst ranks are Lyst's own quarterly ranking from shopper demand and search, social and editorial signals, entered by hand from <a href="{{ lyst.url }}">its public page</a> (retrieved {{ lyst.retrieved|nice_date }}). The change is the one Lyst reports against the previous quarter. Louis Vuitton and Hermès are not sold through Lyst and are not ranked.</p>
+</section>
+
+{% set in_news = rows|selectattr('news_count')|list %}
+{% if in_news %}
+<section class="block" id="in-the-news">
+  <h2>In the news</h2>
+  <p class="meta">Headlines that name each brand, from the WWD, Business of Fashion and Vogue feeds; only the headline, date and link are kept. Matching is by name, so check the headline.</p>
+  {% for r in in_news %}
+  <h3 id="news-{{ r.slug }}">{{ r.name }}</h3>
+  <ul class="headlines">
+    {% for h in r.headlines %}<li><a href="{{ h.link }}" rel="noopener">{{ h.title }}</a> <span class="meta-inline">{{ h.feed }}, {{ h.published|nice_date }}</span></li>{% endfor %}
+  </ul>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="block" id="company-figures">
+  <h2>Company figures</h2>
+  <p class="standfirst">Copied from each company's own release, with the scope it applies to. <strong>Group</strong> is the whole company, <strong>segment</strong> a division holding several brands, <strong>brand</strong> one label. Private houses (Chanel, The Row, Khaite, OTB) publish no comparable quarterly figures, so none are shown.</p>
+  <dl class="entries">
+    {% for f in figures %}
+    <dt>{{ f.label }} <span class="tag tag-stable">{{ f.scope }}</span> <span class="meta-inline">{{ f.period }} {{ f.measure }}</span></dt>
+    <dd>
+      {% if f.value_m %}{{ f.currency }} {{ "{:,}".format(f.value_m) }}m{% if f.prior_m %} (a year earlier: {{ "{:,}".format(f.prior_m) }}m){% endif %}. {% endif %}
+      Growth: {% for k, v in f.growth.items() %}{{ v|pct }} {{ kinds[k] }}{% if not loop.last %}, {% endif %}{% endfor %}.
+      <span class="meta-inline">Covers {{ f.covers }}.{% if f.note %} {{ f.note }}{% endif %} <a href="{{ f.source }}">Source</a></span>
+    </dd>
+    {% endfor %}
+  </dl>
+</section>
+{% endblock %}

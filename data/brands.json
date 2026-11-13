@@ -1,0 +1,295 @@
+{
+ "about": "Brands tracked by Brand Watch, entered by hand on 2026-11-13: the Lyst Index Q3 2026 top 20 plus Louis Vuitton and Hermès, which Lyst does not rank. 'search' is what Google Trends is asked for and the snapshot key under 'brands': a topic id (starting with /) where the name is ambiguous (it separates Celine the brand from Celine Dion, Coach from a bus), plain search words where it is not, because Google sometimes remaps a topic and breaks its history; 'wiki' is the English Wikipedia article; 'group' is the owner as of the date entered. 'news_exclude' lists headline phrases that use the brand's name for something else. 'search_hold' withholds a brand's search label after a human review, with the reason shown on the page.",
+ "groups": [
+  {
+   "id": "prada-group",
+   "name": "Prada Group",
+   "listed": true,
+   "investors": "https://www.pradagroup.com/en/investors.html"
+  },
+  {
+   "id": "chanel",
+   "name": "Chanel",
+   "listed": false
+  },
+  {
+   "id": "kering",
+   "name": "Kering",
+   "listed": true,
+   "investors": "https://www.kering.com/en/finance/"
+  },
+  {
+   "id": "lvmh",
+   "name": "LVMH",
+   "listed": true,
+   "investors": "https://www.lvmh.com/en/investors"
+  },
+  {
+   "id": "burberry-group",
+   "name": "Burberry Group",
+   "listed": true,
+   "investors": "https://www.burberryplc.com/investors"
+  },
+  {
+   "id": "ralph-lauren-corp",
+   "name": "Ralph Lauren Corporation",
+   "listed": true,
+   "investors": "https://investor.ralphlauren.com/"
+  },
+  {
+   "id": "richemont",
+   "name": "Richemont",
+   "listed": true,
+   "investors": "https://www.richemont.com/investors/"
+  },
+  {
+   "id": "tapestry",
+   "name": "Tapestry",
+   "listed": true,
+   "investors": "https://www.tapestry.com/investors/"
+  },
+  {
+   "id": "inditex",
+   "name": "Inditex",
+   "listed": true,
+   "investors": "https://www.inditex.com/itxcomweb/en/investors"
+  },
+  {
+   "id": "the-row",
+   "name": "The Row",
+   "listed": false
+  },
+  {
+   "id": "moncler-group",
+   "name": "Moncler Group",
+   "listed": true,
+   "investors": "https://www.monclergroup.com/en/investors"
+  },
+  {
+   "id": "puig",
+   "name": "Puig",
+   "listed": true,
+   "investors": "https://www.puig.com/en/investors/"
+  },
+  {
+   "id": "otb",
+   "name": "OTB",
+   "listed": false
+  },
+  {
+   "id": "khaite",
+   "name": "Khaite",
+   "listed": false
+  },
+  {
+   "id": "hermes",
+   "name": "Hermès International",
+   "listed": true,
+   "investors": "https://finance.hermes.com/en/"
+  }
+ ],
+ "brands": [
+  {
+   "id": "br-001",
+   "name": "Prada",
+   "slug": "prada",
+   "search": "/m/033j5y",
+   "search_title": "Prada (Fashion company)",
+   "wiki": "Prada",
+   "group": "prada-group"
+  },
+  {
+   "id": "br-002",
+   "name": "Chanel",
+   "slug": "chanel",
+   "search": "/m/036rkh",
+   "search_title": "Chanel (Fashion company)",
+   "wiki": "Chanel",
+   "group": "chanel"
+  },
+  {
+   "id": "br-003",
+   "name": "Miu Miu",
+   "slug": "miu-miu",
+   "search": "/g/11bc5yrmt3",
+   "search_title": "Miu Miu (Topic)",
+   "wiki": "Miu_Miu",
+   "group": "prada-group"
+  },
+  {
+   "id": "br-004",
+   "name": "Gucci",
+   "slug": "gucci",
+   "search": "/m/03gc5x",
+   "search_title": "Gucci (Fashion accessory company)",
+   "wiki": "Gucci",
+   "group": "kering"
+  },
+  {
+   "id": "br-005",
+   "name": "Saint Laurent",
+   "slug": "saint-laurent",
+   "search": "/m/03ccxvf",
+   "search_title": "SAINT LAURENT (Fashion house)",
+   "wiki": "Yves_Saint_Laurent_(fashion_house)",
+   "group": "kering"
+  },
+  {
+   "id": "br-006",
+   "name": "Dior",
+   "slug": "dior",
+   "search": "dior",
+   "search_title": "search words \"dior\" (the topic's history broke)",
+   "wiki": "Dior",
+   "group": "lvmh"
+  },
+  {
+   "id": "br-007",
+   "name": "Burberry",
+   "slug": "burberry",
+   "search": "burberry",
+   "search_title": "search words \"burberry\" (the topic's history broke)",
+   "wiki": "Burberry",
+   "group": "burberry-group"
+  },
+  {
+   "id": "br-008",
+   "name": "Ralph Lauren",
+   "slug": "ralph-lauren",
+   "search": "/m/04lg33",
+   "search_title": "Ralph Lauren Corporation (Fashion company)",
+   "wiki": "Ralph_Lauren_Corporation",
+   "group": "ralph-lauren-corp"
+  },
+  {
+   "id": "br-009",
+   "name": "Chloé",
+   "slug": "chloe",
+   "search": "/m/09w837",
+   "search_title": "Chloé (Clothing company)",
+   "wiki": "Chloé",
+   "group": "richemont"
+  },
+  {
+   "id": "br-010",
+   "name": "Celine",
+   "slug": "celine",
+   "search": "/m/0463vt1",
+   "search_title": "CELINE (Brand)",
+   "wiki": "Celine_(brand)",
+   "group": "lvmh",
+   "news_exclude": [
+    "Celine Dion"
+   ]
+  },
+  {
+   "id": "br-011",
+   "name": "Bottega Veneta",
+   "slug": "bottega-veneta",
+   "search": "bottega veneta",
+   "search_title": "search words \"bottega veneta\" (the topic's history broke)",
+   "wiki": "Bottega_Veneta",
+   "group": "kering"
+  },
+  {
+   "id": "br-012",
+   "name": "Coach",
+   "slug": "coach",
+   "search": "/m/0s9mxly",
+   "search_title": "Coach (Fashion brand)",
+   "wiki": "Coach_New_York",
+   "group": "tapestry"
+  },
+  {
+   "id": "br-013",
+   "name": "Massimo Dutti",
+   "slug": "massimo-dutti",
+   "search": "/m/0284p1n",
+   "search_title": "Massimo Dutti (Clothing retail company)",
+   "wiki": "Massimo_Dutti",
+   "group": "inditex"
+  },
+  {
+   "id": "br-014",
+   "name": "The Row",
+   "slug": "the-row",
+   "search": "/g/113kgn5bq",
+   "search_title": "The Row (Fashion brand)",
+   "wiki": "The_Row_(fashion_label)",
+   "group": "the-row"
+  },
+  {
+   "id": "br-015",
+   "name": "Moncler",
+   "slug": "moncler",
+   "search": "/m/02pyfhb",
+   "search_title": "Moncler (Company)",
+   "wiki": "Moncler",
+   "group": "moncler-group"
+  },
+  {
+   "id": "br-016",
+   "name": "Dries Van Noten",
+   "slug": "dries-van-noten",
+   "search": "dries van noten",
+   "search_title": "search words \"dries van noten\" (the topic's history broke)",
+   "wiki": "Dries_van_Noten",
+   "group": "puig"
+  },
+  {
+   "id": "br-017",
+   "name": "Loewe",
+   "slug": "loewe",
+   "search": "/m/02rf9lb",
+   "search_title": "Loewe (Fashion company)",
+   "wiki": "Loewe_(fashion_brand)",
+   "group": "lvmh"
+  },
+  {
+   "id": "br-018",
+   "name": "Diesel",
+   "slug": "diesel",
+   "search": "/m/0vmzfqz",
+   "search_title": "Diesel (Fashion brand)",
+   "wiki": "Diesel_(company)",
+   "group": "otb"
+  },
+  {
+   "id": "br-019",
+   "name": "Stone Island",
+   "slug": "stone-island",
+   "search": "stone island",
+   "search_title": "search words \"stone island\" (the topic's history broke)",
+   "wiki": "Stone_Island",
+   "group": "moncler-group"
+  },
+  {
+   "id": "br-020",
+   "name": "Khaite",
+   "slug": "khaite",
+   "search": "/g/11dxd44rj3",
+   "search_title": "KHAITE (Topic)",
+   "wiki": "Khaite",
+   "group": "khaite"
+  },
+  {
+   "id": "br-021",
+   "name": "Louis Vuitton",
+   "slug": "louis-vuitton",
+   "search": "/m/03h90x",
+   "search_title": "Louis Vuitton (Fashion company)",
+   "wiki": "Louis_Vuitton",
+   "group": "lvmh"
+  },
+  {
+   "id": "br-022",
+   "name": "Hermès",
+   "slug": "hermes",
+   "search": "/m/06dr8q",
+   "search_title": "Hermès (Jewellery company)",
+   "wiki": "Hermès",
+   "group": "hermes",
+   "search_hold": "held for review: this Google entity (a small 'jewellery company' topic) has grown steadily from 8 to 31 on its own scale while Wikipedia views fell, which looks like Google moving searches onto it rather than real interest"
+  }
+ ]
+}

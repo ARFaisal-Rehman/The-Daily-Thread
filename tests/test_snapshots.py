@@ -62,3 +62,13 @@ def test_publish_removes_the_draft(tmp_path):
     save_draft(tmp_path, "2026-11-13", snapshot({"a": series([1])}))
     publish(tmp_path, "2026-11-13", load_draft(tmp_path, "2026-11-13"))
     assert not draft_path(tmp_path, "2026-11-13").exists()
+
+
+def test_brands_bucket_is_carried_forward(tmp_path):
+    from thread.snapshots import BUCKETS
+    assert "brands" in BUCKETS
+    old = {"fetched": "2026-11-06", "google": {}, "colours": {}, "wiki": {}, "brands": {"/m/x": {"values": [1]}}}
+    (tmp_path / "2026-11-06.json").write_text(json.dumps(old), encoding="utf-8")
+    publish(tmp_path, "2026-11-13", {"google": {}, "colours": {}, "wiki": {}, "brands": {}})
+    out = json.loads((tmp_path / "2026-11-13.json").read_text(encoding="utf-8"))
+    assert out["brands"]["/m/x"]["carried_from"] == "2026-11-06"
