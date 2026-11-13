@@ -1,7 +1,9 @@
-"""Fetch fresh trend data and save it as data/snapshots/<today>.json.
+"""Fetch fresh trend data and publish it as data/snapshots/<today>.json.
 
 Run weekly:  python scripts/refresh_trends.py
-Resumable: terms already in today's snapshot are skipped, so a rate-limited run can be re-run.
+While it runs, results go to data/snapshots/drafts/<today>.json (resumable: an interrupted run
+picks up where it stopped). At the end the draft is published, merged with the last good
+snapshot, so anything Google refused this time is carried forward and marked as older data.
 """
 from __future__ import annotations
 
@@ -17,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from thread.colours import nearest_family  # noqa: E402
+from thread.snapshots import load_draft, publish, save_draft  # noqa: E402
 from thread.sources import google_series, wiki_monthly  # noqa: E402
 
 DATA = ROOT / "data"
@@ -28,14 +31,12 @@ def main() -> None:
     palettes = json.loads((DATA / "palettes.json").read_text(encoding="utf-8"))
     families = sorted({nearest_family(c["hex"])[0] for s in palettes["seasons"] for c in s["colours"]})
 
-    out_path = DATA / "snapshots" / f"{date.today().isoformat()}.json"
-    snap = json.loads(out_path.read_text(encoding="utf-8")) if out_path.exists() else {
-        "fetched": None, "geo": "worldwide", "google": {}, "colours": {}, "wiki": {}}
+    folder, today = DATA / "snapshots", date.today().isoformat()
+    snap = load_draft(folder, today)    # resume today's unfinished run, if any
 
     def save() -> None:
         snap["fetched"] = datetime.now(timezone.utc).isoformat(timespec="minutes")
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_path.write_text(json.dumps(snap, separators=(",", ":")), encoding="utf-8")
+        save_draft(folder, today, snap)
 
     jobs = [("google", t["term"], t["term"]) for t in terms] + [("colours", f, f"{f} outfit") for f in families]
     for bucket, key, query in jobs:
@@ -46,7 +47,7 @@ def main() -> None:
         if series is None:
             print("  no data")
             continue
-        snap[bucket][key] = series
+        snap[bucket][key] = {**series, "collected_at": today}
         save()
         time.sleep(random.uniform(PAUSE, PAUSE * 2))
 
@@ -55,11 +56,12 @@ def main() -> None:
         if art and art not in snap["wiki"]:
             w = wiki_monthly(art)
             if w:
-                snap["wiki"][art] = w
+                snap["wiki"][art] = {**w, "collected_at": today}
     save()
+    report = publish(folder, today, snap)     # merge with the last good snapshot; misses are carried forward
     missing = [t["term"] for t in terms if t["term"] not in snap["google"]]
-    print(f"saved {out_path.name}: {len(snap['google'])} terms, {len(snap['colours'])} colour words, "
-          f"{len(snap['wiki'])} wiki articles; missing {missing}")
+    print(f"published {today}.json: {report['fresh']} fresh series, {report['carried']} carried forward "
+          f"from {report['previous']}; terms not fetched this run: {missing}")
 
 
 if __name__ == "__main__":

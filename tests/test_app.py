@@ -30,10 +30,34 @@ def client(tmp_path):
     colours = {w: weekly([20] * 130) for w in words}
     snap = {"fetched": "2026-11-13T00:00+00:00", "geo": "worldwide", "google": google, "colours": colours,
             "wiki": {"Skinny_jeans": {"months": [f"m{i}" for i in range(15)], "views": [100] * 12 + [60] * 3}}}
+    snap["google"]["trench coat"] = {**weekly([30] * 130), "collected_at": "2026-11-06", "carried_from": "2026-11-06"}
     (snaps / "2026-11-13.json").write_text(json.dumps(snap), encoding="utf-8")
-    app = create_app(db_path=str(tmp_path / "t.db"), snapshots=snaps)
+    app = make_app(tmp_path, snaps)
     app.config["TESTING"] = True
     return app.test_client()
+
+
+def make_app(tmp_path, snaps):
+    return create_app(db_path=str(tmp_path / "t.db"), snapshots=snaps, instance_path=str(tmp_path / "instance"))
+
+
+def test_wardrobe_survives_a_restart(tmp_path, client):
+    client.post("/wardrobe", data={"name": "Probe coat", "kind": "Outerwear", "colour": "#755139"})
+    cookie = client.get_cookie("session").value
+    restarted = make_app(tmp_path, tmp_path / "snapshots").test_client()   # new process, same instance folder
+    restarted.set_cookie("session", cookie)
+    assert "Probe coat" in restarted.get("/wardrobe").get_data(as_text=True)
+
+
+def test_dateline_shows_when_the_data_ends_not_the_file_date(client):
+    html = client.get("/").get_data(as_text=True)
+    assert "Search data to 1 Nov 2026" in html
+    assert "refreshed 13 Nov 2026" in html
+
+
+def test_carried_forward_terms_say_how_old_they_are(client):
+    html = client.get("/").get_data(as_text=True)
+    assert "data from 6 Nov 2026 (last refresh failed)" in html
 
 
 def test_front_page_sorts_terms_into_in_and_out(client):

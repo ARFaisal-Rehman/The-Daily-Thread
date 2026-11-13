@@ -4,3 +4,5 @@ __pycache__/
 data/thread.db
 .env
 graphify-out/
+instance/
+data/snapshots/drafts/

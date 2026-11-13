@@ -6,7 +6,7 @@
     <svg class="spark" viewBox="0 0 120 32" role="img" aria-label="Weekly search interest over the last two years for {{ i.term }}"><path d="{{ i.spark }}"/></svg>
     <span class="num">{{ i.yoy|pct }}</span>
   </a>
-  <span class="meta">{{ i.category }}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}</span>
+  <span class="meta">{{ i.category }}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}{% if i.carried_from %} &middot; <span class="stale">data from {{ i.collected_at|nice_date }} (last refresh failed)</span>{% endif %}</span>
 </li>
 {% endmacro %}
 {% block content %}

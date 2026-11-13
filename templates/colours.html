@@ -26,7 +26,7 @@
   <article>
     <p class="kicker">Colours of the season</p>
     <h1>{{ now.label }}</h1>
-    <p class="standfirst">The ten shades and five core neutrals Pantone picked from the New York Fashion Week runways, and whether people are actually searching for them. Each colour is matched to the everyday word nearest to it (by CIELAB distance), and searches for &ldquo;&lt;word&gt; outfit&rdquo; from {{ now.start }} to {{ as_of }} are compared with the same dates a year earlier.</p>
+    <p class="standfirst">The ten shades and five core neutrals Pantone picked from the New York Fashion Week runways, and whether people are actually searching for them. Each colour is matched to the everyday word nearest to it (by CIELAB distance), and searches for &ldquo;&lt;word&gt; outfit&rdquo; from {{ now.start|nice_date }} to {{ data_to|nice_date }} are compared with the same dates a year earlier.</p>
   </article>
 </section>
 

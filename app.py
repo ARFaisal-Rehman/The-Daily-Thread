@@ -30,13 +30,37 @@ CREATE TABLE IF NOT EXISTS checks (
 """
 
 
-def create_app(db_path: str | None = None, snapshots: Path | None = None) -> Flask:
-    app = Flask(__name__)
-    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(16)
+def secret_key(instance_path: str) -> str:
+    """SECRET_KEY from the environment, else one generated once and kept in instance/secret_key.
+
+    The key signs the session cookie that links a browser to its wardrobe. A new random key on
+    every start (the old behaviour) made every reader's wardrobe vanish after a restart.
+    """
+    if os.environ.get("SECRET_KEY"):
+        return os.environ["SECRET_KEY"]
+    path = Path(instance_path) / "secret_key"
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(secrets.token_hex(32), encoding="utf-8")
+    return path.read_text(encoding="utf-8").strip()
+
+
+def nice_date(iso: str | None) -> str:
+    """'2026-11-01' -> '1 Nov 2026'."""
+    if not iso:
+        return "unknown"
+    d = date.fromisoformat(iso[:10])
+    return f"{d.day} {d:%b %Y}"
+
+
+def create_app(db_path: str | None = None, snapshots: Path | None = None, instance_path: str | None = None) -> Flask:
+    app = Flask(__name__, instance_path=instance_path)
+    app.config["SECRET_KEY"] = secret_key(app.instance_path)
     app.config["DB"] = db_path or str(ROOT / "data" / "thread.db")
     app.config["SNAPSHOTS"] = snapshots or ROOT / "data" / "snapshots"
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.jinja_env.filters["pct"] = lambda v: "n/a" if v is None else f"{v:+.0%}".replace("-", "−")
+    app.jinja_env.filters["nice_date"] = nice_date
 
     def db() -> sqlite3.Connection:
         if "db" not in g:
@@ -67,7 +91,8 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None) -> Fla
     @app.context_processor
     def globals_():
         r = get_radar(app.config["SNAPSHOTS"])
-        return {"as_of": r.as_of if r else None, "endpoint": request.endpoint}
+        return {"as_of": r.as_of if r else None, "data_to": r.data_to if r else None,
+                "missing": r.missing if r else [], "endpoint": request.endpoint}
 
     # ------------------------------------------------------------------ radar
     @app.route("/")

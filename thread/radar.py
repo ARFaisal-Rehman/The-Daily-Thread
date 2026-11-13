@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from .colours import FAMILIES, nearest_family, palette_profile
+from .snapshots import latest_published
 from .trends import LABELS, classify, wiki_yoy, window_change
 
 DATA = Path(__file__).resolve().parents[1] / "data"
@@ -16,11 +17,6 @@ DATA = Path(__file__).resolve().parents[1] / "data"
 
 def slug(term: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", term.lower()).strip("-")
-
-
-def latest_snapshot(folder: Path = DATA / "snapshots") -> Optional[Path]:
-    files = sorted(folder.glob("*.json"))
-    return files[-1] if files else None
 
 
 def sparkline(values: List[float], w: int = 120, h: int = 32) -> str:
@@ -56,8 +52,11 @@ class Radar:
         self.snap = json.loads(snapshot.read_text(encoding="utf-8"))
         self.terms = json.loads(terms_file.read_text(encoding="utf-8"))["terms"]
         self.palettes = json.loads(palettes_file.read_text(encoding="utf-8"))
-        self.as_of = snapshot.stem
+        self.as_of = snapshot.stem          # the day the snapshot was published
         self.items = self._items()
+        ends = [s["dates"][-1] for s in self.snap["google"].values() if s.get("dates")]
+        self.data_to = max(ends) if ends else self.as_of   # last complete week of search data
+        self.missing = [t["term"] for t in self.terms if t["term"] not in self.snap["google"]]
 
     # ------------------------------------------------------------------ terms
     def _items(self) -> List[Dict]:
@@ -73,7 +72,8 @@ class Radar:
             if w_yoy is not None and sig.yoy is not None:
                 agrees = (w_yoy > 0) == (sig.yoy > 0)
             out.append({**t, "slug": slug(t["term"]), **sig.as_dict(), "wiki_yoy": w_yoy, "wiki_agrees": agrees,
-                        "spark": sparkline(s["values"][-104:]), "last_week": s["dates"][-1]})
+                        "spark": sparkline(s["values"][-104:]), "last_week": s["dates"][-1],
+                        "collected_at": s.get("collected_at"), "carried_from": s.get("carried_from")})
         order = {name: i for i, name in enumerate(LABELS)}
         return sorted(out, key=lambda x: (order[x["label"]], -(x["yoy"] or 0)))
 
@@ -94,7 +94,7 @@ class Radar:
         return next((s for s in self.palettes["seasons"] if s["id"] == sid), None)
 
     def colour_story(self, today: Optional[date] = None) -> Dict:
-        today = today or date.fromisoformat(self.as_of)
+        today = today or date.fromisoformat(self.data_to)
         now = season_now(today)
         kind, yy = now[:2], int(now[2:])
         last = f"{'ss' if kind == 'aw' else 'aw'}{yy if kind == 'aw' else yy - 1}"
@@ -162,7 +162,7 @@ def _load(path: str, mtime: float) -> Radar:
 
 
 def get_radar(folder: Path = DATA / "snapshots") -> Optional[Radar]:
-    snap = latest_snapshot(folder)
+    snap = latest_published(folder)
     if snap is None:
         return None
     return _load(str(snap), snap.stat().st_mtime)

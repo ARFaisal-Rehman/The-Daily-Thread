@@ -14,7 +14,7 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
   <div class="dateline">
-    <span>{% if as_of %}Search data as of {{ as_of }}{% else %}No data yet{% endif %}</span>
+    <span>{% if as_of %}Search data to {{ data_to|nice_date }} &middot; refreshed {{ as_of|nice_date }}{% else %}No data yet{% endif %}</span>
     <span>Worldwide &middot; Google Trends + Wikipedia</span>
   </div>
   <a class="nameplate" href="{{ url_for('front') }}">The Daily Thread</a>
