@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}News Desk · The Daily Thread{% endblock %}
+{% block content %}
+<section class="lead">
+  <article>
+    <p class="kicker">News Desk</p>
+    <h1>{% if tag %}Headlines on {{ d.tag_names.get(tag, tag) }}{% elif feed %}Headlines from {{ feed }}{% else %}What the trade is writing about{% endif %}</h1>
+    <p class="standfirst">Headlines from the WWD, Business of Fashion and Vogue feeds, tagged with the brands, owner groups and Fashion Dictionary terms they name. Only the headline, date and link are kept: read the story on the publisher's site.</p>
+  </article>
+</section>
+
+{% if not has_archive %}
+<p class="empty">No headlines collected yet. Run <code>python scripts/refresh_trends.py --brands</code> to fetch the feeds.</p>
+{% else %}
+<div class="news-layout">
+  <section class="block news-list">
+    <p class="coverage">{{ d.shown }} of {{ d.count }} headlines{% if tag or feed %} &middot; <a href="{{ url_for('news') }}">show all</a>{% endif %} &middot; feeds:
+      {% for f in d.feeds %}<a href="{{ url_for('news', feed=f) }}" {% if feed == f %}aria-current="true"{% endif %}>{{ f }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+    {% for day, stories in d.days %}
+    <h2 class="news-day">{{ day|nice_date }}</h2>
+    <ul class="headlines">
+      {% for s in stories %}
+      <li>
+        <a href="{{ s.link }}" rel="noopener">{{ s.title }}</a>
+        <span class="meta-inline">{{ s.feed }}{% if s.also_in %}, also {{ s.also_in|join(', ') }}{% endif %}</span>
+        {% for t in s.tags %}<a class="tag tag-stable news-tag" href="{{ url_for('news', tag=t.slug) }}" title="{{ t.kind }}">{{ t.name }}</a>{% endfor %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty">No headline matches this filter.</p>
+    {% endfor %}
+  </section>
+  {% if d.top %}
+  <aside class="block news-top" aria-label="Most mentioned">
+    <h2>Most mentioned, last 30 days</h2>
+    <ol>{% for slug, name, n in d.top %}<li><a href="{{ url_for('news', tag=slug) }}">{{ name }}</a> <span class="meta-inline">{{ n }} headline{{ '' if n == 1 else 's' }}</span></li>{% endfor %}</ol>
+    <p class="meta">Counts headlines, not coverage: a feed shows only its latest items, and matching is by name.</p>
+  </aside>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -45,7 +45,8 @@ The Daily Thread reads public search data and tells you, in newspaper form:
 1. **What is in and what is out.** 36 fashion terms from the project's own Fashion Dictionary (each with a definition, other names and a place in a category tree), labelled Rising, Emerging, Peaking, Stable, Fading or Out from five years of weekly Google Trends data, with a confidence level, Wikipedia page views as a second opinion, and every rule backtested.
 2. **The colours of the season.** Pantone's New York Fashion Week palette for the current season, whether people are actually searching for those colours compared with a year ago, what changed from last season's palette, and a preview of next season.
 3. **Who people are looking at.** Brand Watch follows 22 brands (the Lyst Index Q3 2026 top 20 plus Louis Vuitton and Hermès) by Google search interest, Wikipedia page views and Lyst rank, with company revenue figures kept in a separate, scoped panel.
-4. **Whether to buy it.** A wardrobe you can fill in and a five-question purchase check that scores a planned buy, using the radar (buying a Rising style means buying near the top of the hype).
+4. **What the trade is writing about.** A News Desk of WWD, Business of Fashion and Vogue headlines, merged across feeds and tagged with the brands, owner groups and dictionary terms they name.
+5. **Whether to buy it.** A wardrobe you can fill in and a five-question purchase check that scores a planned buy, using the radar (buying a Rising style means buying near the top of the hype).
 
 Every label comes from a written rule, shown on the site's How It Works page.
 
@@ -194,6 +195,10 @@ The page keeps two rules:
 
 Headlines come from the WWD, Business of Fashion and Vogue RSS feeds: only the headline, link, date and feed name are stored, the archive grows with each refresh (90 days kept, duplicates merged by link), and a brand counts as mentioned when its name appears in a headline, ignoring accents, minus phrases such as "Celine Dion". Wikipedia views are down for almost every brand year on year, so the page shows the median brand beside them.
 
+### News Desk
+
+`/news` shows the headline archive by day. `thread/news.py` merges a headline that several feeds ran (by its words, ignoring punctuation and case) and tags it with every brand, owner group and reviewed dictionary term it names, using the same whole-word, accent-insensitive matching as Brand Watch; proposed dictionary terms are left out because words like "dot" and "check" would tag nonsense. Tags and feeds work as filters, and a side panel counts the most-mentioned tags over 30 days. On the first archive, 139 headlines, none named a tracked trend term: trade headlines are about companies, not "barrel jeans", which is itself a finding.
+
 Refresh brands and news alone with `python scripts/refresh_trends.py --brands`; everything else is carried forward. A second refresh on the same day only fetches what is still missing.
 
 ## Data and Licences
@@ -238,7 +243,7 @@ Refresh brands and news alone with `python scripts/refresh_trends.py --brands`; 
 - The social side of the original idea: a feed where people post outfits and react, on top of the existing SQLite store. The original virtual pet is retired.
 - Review the 277 proposed terms: check search volume (with the official Google Trends API once access is granted), write definitions and promote the ones worth tracking. Bags, accessories and jewellery still need a source.
 - Brand Watch, next part: GDELT news volume once its rate limit allows (one request per 5 seconds, cached daily), brand pages, and share prices if Alpha Vantage covers Paris-listed stocks.
-- A news desk from GDELT and permitted RSS feeds, deduplicated and tagged by brand.
+- News Desk, next part: GDELT discovery once its rate limit allows, more feeds after reading each publisher's terms, and an edition front page that pulls the radar, Brand Watch and the desk together.
 
 ## Author
 

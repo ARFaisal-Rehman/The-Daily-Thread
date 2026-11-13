@@ -195,3 +195,34 @@ def test_nav_links_brand_watch(client):
 def test_stale_marker_does_not_blame_a_failure(client):
     html = client.get("/").get_data(as_text=True)
     assert "data from 6 Nov 2026 (not updated in the last refresh)" in html
+
+
+def news_client(tmp_path, items):
+    snaps = tmp_path / "news_snaps"
+    snaps.mkdir()
+    snap = {"fetched": "2026-11-13T00:00+00:00", "google": {}, "colours": {}, "wiki": {}, "brands": {},
+            "news": {"WWD": {"items": items}}}
+    (snaps / "2026-11-13.json").write_text(json.dumps(snap), encoding="utf-8")
+    app = make_app(tmp_path, snaps)
+    app.config["TESTING"] = True
+    return app.test_client()
+
+
+def test_news_desk_lists_tagged_headlines_and_filters(tmp_path):
+    c = news_client(tmp_path, [
+        {"title": "Kering Names New Gucci Chief", "link": "https://wwd.com/k", "published": "2026-11-11", "feed": "WWD"},
+        {"title": "A Story About Nothing", "link": "https://wwd.com/n", "published": "2026-11-10", "feed": "WWD"}])
+    html = c.get("/news").get_data(as_text=True)
+    assert "News Desk" in html and 'href="https://wwd.com/k"' in html
+    assert 'href="/news?tag=gucci"' in html and 'href="/news?tag=kering"' in html
+    assert "11 Nov 2026" in html
+    filtered = c.get("/news?tag=kering").get_data(as_text=True)
+    assert "Kering Names New Gucci Chief" in filtered and "A Story About Nothing" not in filtered
+
+
+def test_news_desk_without_an_archive_says_so(client):
+    assert "No headlines collected yet" in client.get("/news").get_data(as_text=True)
+
+
+def test_nav_links_news_desk(client):
+    assert 'href="/news"' in client.get("/").get_data(as_text=True)

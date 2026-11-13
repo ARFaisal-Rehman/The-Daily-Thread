@@ -15,6 +15,8 @@ from pathlib import Path
 from flask import Flask, abort, g, redirect, render_template, request, session, url_for
 
 from thread.brands import BrandWatch
+from thread.brands import load as load_brands
+from thread.news import desk
 from thread.colours import nearest_family
 from thread.radar import get_radar, sparkline
 from thread.trends import METHODOLOGY_VERSION
@@ -161,6 +163,23 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         return render_template("brands.html", rows=watch.rows(), lyst=watch.data.lyst, figures=figures,
                                groups=watch.data.groups, news_days=watch.news_days,
                                wiki_median=watch.wiki_median)
+
+    @app.route("/news")
+    def news():
+        r = radar()
+        data = load_brands()
+        brand_names = {b.name for b in data.brands}
+        tags = ([{"slug": b.slug, "name": b.name, "kind": "brand", "names": [b.name], "exclude": b.news_exclude}
+                 for b in data.brands]
+                + [{"slug": gid, "name": g["name"], "kind": "group", "names": [g["name"]]}
+                   for gid, g in data.groups.items() if g["name"] not in brand_names and not g["name"].startswith(
+                       tuple(brand_names))]
+                + [{"slug": t["slug"], "name": t["name"], "kind": "term",
+                    "names": [t["name"], t["term"], *r.dictionary.by_id[t["id"]].aliases]} for t in r.terms])
+        items = [i for f in r.snap.get("news", {}).values() for i in f.get("items", [])]
+        tag, feed = request.args.get("tag") or None, request.args.get("feed") or None
+        d = desk(items, tags, today=r.as_of, tag=tag, feed=feed)
+        return render_template("news.html", d=d, tag=tag, feed=feed, has_archive=bool(items))
 
     @app.route("/colours")
     def colours():

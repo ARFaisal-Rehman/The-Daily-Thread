@@ -67,3 +67,43 @@ def test_refresh_stores_feeds_in_the_news_bucket_and_keeps_history(tmp_path):
     run(tmp_path, [], [], feeds={"Sample": "https://example.com/feed"}, news=feed, today="2026-11-13", pause=0)
     out = json.loads((tmp_path / "2026-11-13.json").read_text(encoding="utf-8"))
     assert [i["link"] for i in out["news"]["Sample"]["items"]] == ["t", "e"]
+
+
+from thread.news import dedupe, desk  # noqa: E402
+
+ITEMS = [
+    {"title": "Prada Back on Top", "link": "a", "published": "2026-11-12", "feed": "WWD"},
+    {"title": "Prada back on top!", "link": "a2", "published": "2026-11-12", "feed": "Business of Fashion"},
+    {"title": "Kering Names New Gucci Chief", "link": "b", "published": "2026-11-11", "feed": "Vogue"},
+    {"title": "Why Ballet Flats Are Everywhere", "link": "c", "published": "2026-11-10", "feed": "Vogue"},
+    {"title": "Celine Dion Announces Tour", "link": "d", "published": "2026-11-09", "feed": "Vogue"},
+]
+TAGS = [{"slug": "prada", "name": "Prada", "kind": "brand", "names": ["Prada"]},
+        {"slug": "gucci", "name": "Gucci", "kind": "brand", "names": ["Gucci"]},
+        {"slug": "celine", "name": "Celine", "kind": "brand", "names": ["Celine"], "exclude": ["Celine Dion"]},
+        {"slug": "kering", "name": "Kering", "kind": "group", "names": ["Kering"]},
+        {"slug": "ballet-flats", "name": "Ballet flats", "kind": "term", "names": ["Ballet flats", "ballet flat", "ballerina flats"]}]
+
+
+def test_dedupe_merges_the_same_headline_across_feeds():
+    out = dedupe(ITEMS)
+    assert [i["link"] for i in out] == ["a", "b", "c", "d"]
+    assert out[0]["also_in"] == ["Business of Fashion"]
+
+
+def test_desk_tags_groups_days_and_counts():
+    d = desk(ITEMS, TAGS, today="2026-11-13")
+    first = d["days"][0]
+    assert first[0] == "2026-11-12" and [t["slug"] for t in first[1][0]["tags"]] == ["prada"]
+    kering = next(i for day, items in d["days"] for i in items if i["link"] == "b")
+    assert {t["slug"] for t in kering["tags"]} == {"gucci", "kering"}
+    flats = next(i for day, items in d["days"] for i in items if i["link"] == "c")
+    assert [t["kind"] for t in flats["tags"]] == ["term"]
+    dion = next(i for day, items in d["days"] for i in items if i["link"] == "d")
+    assert dion["tags"] == []
+    assert d["count"] == 4 and ("prada", "Prada", 1) in d["top"] and len(d["top"]) == 4
+
+
+def test_desk_filters_by_tag_and_feed():
+    assert [i["link"] for _, items in desk(ITEMS, TAGS, today="2026-11-13", tag="kering")["days"] for i in items] == ["b"]
+    assert {i["feed"] for _, items in desk(ITEMS, TAGS, today="2026-11-13", feed="Vogue")["days"] for i in items} == {"Vogue"}
