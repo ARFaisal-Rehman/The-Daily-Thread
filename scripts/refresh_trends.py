@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from thread.colours import nearest_family  # noqa: E402
+from thread.dictionary import load as load_dictionary  # noqa: E402
 from thread.refresh import run  # noqa: E402
 
 DATA = ROOT / "data"
@@ -25,7 +26,7 @@ PAUSE = float(os.environ.get("TRENDS_PAUSE", 3))  # seconds between Google queri
 
 
 def main() -> None:
-    terms = json.loads((DATA / "terms.json").read_text(encoding="utf-8"))["terms"]
+    terms = load_dictionary().tracked()       # active terms from data/dictionary.json
     palettes = json.loads((DATA / "palettes.json").read_text(encoding="utf-8"))
     families = sorted({nearest_family(c["hex"])[0] for s in palettes["seasons"] for c in s["colours"]})
     report = run(DATA / "snapshots", terms, families, pause=PAUSE)

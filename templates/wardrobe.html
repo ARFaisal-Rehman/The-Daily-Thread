@@ -24,7 +24,7 @@
     <label for="term">Style it belongs to <span class="hint">(optional)</span></label>
     <select id="term" name="term">
       <option value="">None of these</option>
-      {% for s in styles|sort(attribute='term') %}<option value="{{ s.slug }}" {% if request.form.term == s.slug %}selected{% endif %}>{{ s.term }}</option>{% endfor %}
+      {% for s in styles|sort(attribute='name') %}<option value="{{ s.slug }}" {% if request.form.term == s.slug %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
     </select>
     <button class="button" type="submit">Add to wardrobe</button>
   </form>
@@ -40,7 +40,7 @@
         <div>
           <h3>{{ i.name }}</h3>
           <p class="meta">{{ i.kind }} &middot; reads as {{ i.family }} &middot; {% if i.in_season %}<strong>in season</strong>{% else %}not in this season's palette{% endif %}</p>
-          {% if i.trend %}<p class="meta"><a href="{{ url_for('trend', term_slug=i.trend.slug) }}">{{ i.trend.term }}</a>: <span class="tag tag-{{ i.trend.label|lower }}">{{ i.trend.label }}</span> {{ i.trend.yoy|pct }}</p>{% endif %}
+          {% if i.trend %}<p class="meta"><a href="{{ url_for('trend', term_slug=i.trend.slug) }}">{{ i.trend.name }}</a>: <span class="tag tag-{{ i.trend.label|lower }}">{{ i.trend.label }}</span> {{ i.trend.yoy|pct }}</p>{% endif %}
         </div>
         <form method="post" action="{{ url_for('delete_item', item_id=i.id) }}">
           <button class="link-button" type="submit" aria-label="Remove {{ i.name }}">Remove</button>

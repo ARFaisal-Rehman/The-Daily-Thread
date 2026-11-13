@@ -20,7 +20,7 @@
     <label for="term">Which style is it? <span class="hint">(links it to the radar)</span></label>
     <select id="term" name="term">
       <option value="">Not on the radar</option>
-      {% for s in styles|sort(attribute='term') %}<option value="{{ s.slug }}" {% if pre == s.slug %}selected{% endif %}>{{ s.term }} ({{ s.label }})</option>{% endfor %}
+      {% for s in styles|sort(attribute='name') %}<option value="{{ s.slug }}" {% if pre == s.slug %}selected{% endif %}>{{ s.name }} ({{ s.label }})</option>{% endfor %}
     </select>
     <label for="wears">How many times a month will you wear it?</label>
     <input id="wears" name="wears" type="number" min="0" max="31" required value="{{ request.form.wears or 2 }}">

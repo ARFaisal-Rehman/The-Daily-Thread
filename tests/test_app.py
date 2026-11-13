@@ -97,6 +97,27 @@ def test_method_page_without_a_backtest_says_so(client, tmp_path):
     assert "No backtest has been run" in client.get("/method").get_data(as_text=True)
 
 
+def test_dictionary_page_lists_terms_by_category(client):
+    html = client.get("/dictionary").get_data(as_text=True)
+    assert "Clothing" in html and "Jeans" in html and "Aesthetics" in html
+    assert "curve outward through the thigh" in html                       # barrel jeans definition
+    assert 'href="/trend/barrel-jeans"' in html                              # has radar data in the fixture
+    assert "Barn jacket" in html and 'href="/trend/barn-jacket"' not in html # no data: listed, not linked
+
+
+def test_dictionary_search_finds_aliases(client):
+    html = client.get("/dictionary?q=stealth+wealth").get_data(as_text=True)
+    assert "Quiet luxury" in html and "1 term" in html
+
+
+def test_trend_page_shows_the_dictionary_entry(client):
+    html = client.get("/trend/barrel-jeans").get_data(as_text=True)
+    assert "curve outward through the thigh" in html
+    assert "Also called" in html and "horseshoe jeans" in html
+    assert "Clothing / Bottoms / Jeans" in html
+    assert "Baggy jeans" in html                                            # related term
+
+
 def test_carried_forward_terms_say_how_old_they_are(client):
     html = client.get("/").get_data(as_text=True)
     assert "data from 6 Nov 2026 (last refresh failed)" in html

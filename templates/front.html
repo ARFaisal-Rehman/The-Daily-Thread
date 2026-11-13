@@ -2,8 +2,8 @@
 {% macro row(i) %}
 <li class="trend-row">
   <a href="{{ url_for('trend', term_slug=i.slug) }}">
-    <span class="term">{{ i.term }}</span>
-    <svg class="spark" viewBox="0 0 120 32" role="img" aria-label="Weekly search interest over the last two years for {{ i.term }}"><path d="{{ i.spark }}"/></svg>
+    <span class="term">{{ i.name }}</span>
+    <svg class="spark" viewBox="0 0 120 32" role="img" aria-label="Weekly search interest over the last two years for {{ i.name }}"><path d="{{ i.spark }}"/></svg>
     <span class="num">{{ i.yoy|pct }}</span>
   </a>
   <span class="meta">{{ i.category }}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}{% if i.carried_from %} &middot; <span class="stale">data from {{ i.collected_at|nice_date }} (last refresh failed)</span>{% endif %}</span>
@@ -14,14 +14,14 @@
   {% if lead %}
   <article>
     <p class="kicker">Biggest riser</p>
-    <h1><a href="{{ url_for('trend', term_slug=lead.slug) }}">{{ lead.term|capitalize }}: searches {{ lead.yoy|pct }} on a year ago</a></h1>
+    <h1><a href="{{ url_for('trend', term_slug=lead.slug) }}">{{ lead.name }}: searches {{ lead.yoy|pct }} on a year ago</a></h1>
     <p class="standfirst">The last 12 weeks of worldwide Google searches against the same 12 weeks of last year. Labelled <strong class="tag tag-{{ lead.label|lower }}">{{ lead.label }}</strong>.</p>
   </article>
   {% endif %}
   {% if falling %}
   <article class="second">
     <p class="kicker">Biggest faller</p>
-    <h2><a href="{{ url_for('trend', term_slug=falling.slug) }}">{{ falling.term|capitalize }}: {{ falling.yoy|pct }}</a></h2>
+    <h2><a href="{{ url_for('trend', term_slug=falling.slug) }}">{{ falling.name }}: {{ falling.yoy|pct }}</a></h2>
     <p class="standfirst">Labelled <strong class="tag tag-{{ falling.label|lower }}">{{ falling.label }}</strong>, at {{ '%.0f'|format(falling.vs_peak * 100) }}% of its five-year high.</p>
   </article>
   {% endif %}

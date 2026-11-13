@@ -26,7 +26,7 @@ def main() -> None:
     print("| Term | Label | Year on year | Share of 5-year high | Wikipedia YoY |\n|---|---|---|---|---|")
     for i in r.items:
         flag = " (low volume)" if i["low_volume"] else ""
-        print(f"| {i['term']}{flag} | {i['label']} | {pct(i['yoy'])} | {i['vs_peak']:.0%} | {pct(i['wiki_yoy'])} |")
+        print(f"| {i['name']}{flag} | {i['label']} | {pct(i['yoy'])} | {i['vs_peak']:.0%} | {pct(i['wiki_yoy'])} |")
     with_wiki = [i for i in r.items if i["wiki_agrees"] is not None]
     if with_wiki:
         agree = sum(i["wiki_agrees"] for i in with_wiki)

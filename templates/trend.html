@@ -1,17 +1,23 @@
 {% extends "base.html" %}
-{% block title %}{{ item.term|capitalize }} · The Daily Thread{% endblock %}
+{% block title %}{{ item.name }} · The Daily Thread{% endblock %}
 {% block content %}
-<p class="crumb"><a href="{{ url_for('front') }}">Trend Radar</a> / {{ item.category }}</p>
+<p class="crumb"><a href="{{ url_for('front') }}">Trend Radar</a> / <a href="{{ url_for('dictionary') }}">{{ category_path }}</a></p>
 <article class="story">
   <p class="kicker"><span class="tag tag-{{ item.label|lower }}">{{ item.label }}</span></p>
-  <h1>{{ item.term|capitalize }}</h1>
+  <h1>{{ item.name }}</h1>
+  <dl class="entry">
+    <dt>What it is</dt><dd>{{ entry.definition }}</dd>
+    {% if entry.aliases %}<dt>Also called</dt><dd>{{ entry.aliases|join(', ') }}</dd>{% endif %}
+    {% if related %}<dt>Related</dt><dd>{% for t in related %}{% if t.slug in has_data %}<a href="{{ url_for('trend', term_slug=t.slug) }}">{{ t.name }}</a>{% else %}{{ t.name }}{% endif %}{{ ', ' if not loop.last }}{% endfor %}</dd>{% endif %}
+    {% if entry.notes %}<dt>Note</dt><dd>{{ entry.notes }}</dd>{% endif %}
+  </dl>
   <p class="standfirst">
     {% if item.yoy is not none %}Worldwide Google searches over the last 12 weeks are {{ item.yoy|pct }} against the same weeks last year{% else %}Not enough history for a year-on-year comparison{% endif %},
     and sit at {{ '%.0f'|format(item.vs_peak * 100) }}% of the term's highest 12-week stretch since {{ first[:4] }}.
   </p>
 
   <figure class="chart">
-    <svg viewBox="-4 -4 768 248" role="img" aria-label="Weekly Google search interest for {{ item.term }} from {{ first }} to {{ last }}, scaled 0 to 100 where 100 is the peak week">
+    <svg viewBox="-4 -4 768 248" role="img" aria-label="Weekly Google search interest for {{ item.name|lower }} from {{ first }} to {{ last }}, scaled 0 to 100 where 100 is the peak week">
       <rect class="band" x="{{ prior_x }}" y="0" width="{{ band }}" height="220"/>
       <rect class="band now" x="{{ recent_x }}" y="0" width="{{ band }}" height="220"/>
       {% for x, y in years %}<line class="grid" x1="{{ x }}" x2="{{ x }}" y1="0" y2="220"/><text class="axis" x="{{ x + 4 }}" y="238">{{ y }}</text>{% endfor %}
@@ -32,6 +38,6 @@
     </tbody>
   </table>
   {% if item.low_volume %}<p class="note">Low search volume: small numbers on Google's scale move a lot, so treat this label with care.</p>{% endif %}
-  <p><a class="button" href="{{ url_for('check', term=item.slug) }}">Thinking of buying into {{ item.term }}?</a></p>
+  <p><a class="button" href="{{ url_for('check', term=item.slug) }}">Thinking of buying into {{ item.name|lower }}?</a></p>
 </article>
 {% endblock %}

@@ -119,6 +119,9 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         if item is None:
             abort(404)
         s = r.series(item["term"])
+        entry = r.dictionary.by_slug[term_slug]
+        related = [r.dictionary.by_id[x] for x in entry.related]
+        has_data = {i["slug"] for i in r.items}
         w, h, n = 760, 220, len(s["values"])
         years = [(i * w / max(1, n - 1), d[:4]) for i, d in enumerate(s["dates"])
                  if i and d[:4] != s["dates"][i - 1][:4]]
@@ -126,7 +129,22 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         prior_x = (n - 64) * w / max(1, n - 1)
         return render_template("trend.html", item=item, path=sparkline(s["values"], w, h), years=years,
                                recent_x=recent_x, prior_x=prior_x, band=12 * w / max(1, n - 1),
-                               first=s["dates"][0], last=s["dates"][-1], peak=max(s["values"]))
+                               first=s["dates"][0], last=s["dates"][-1], peak=max(s["values"]),
+                               entry=entry, category_path=" / ".join(r.dictionary.path(entry.category)), related=related,
+                               has_data=has_data)
+
+    @app.route("/dictionary")
+    def dictionary():
+        r = radar()
+        d = r.dictionary
+        q = request.args.get("q", "").strip()[:60]
+        terms = [t for t in (d.search(q) if q else d.terms) if t.status == "active"]
+        order = list(d.categories)
+        groups: dict = {}
+        for t in sorted(terms, key=lambda t: (order.index(t.category), t.name)):
+            groups.setdefault(" / ".join(d.path(t.category)), []).append(t)
+        return render_template("dictionary.html", groups=groups, q=q, count=len(terms),
+                               radar={i["slug"]: i for i in r.items})
 
     @app.route("/colours")
     def colours():
@@ -239,7 +257,7 @@ def mindful_score(form, trend: dict | None, owned_same_kind: int) -> dict:
         score -= 10
         reasons.append("Part of the pull is that it's trending.")
     if trend:
-        lab, term = trend["label"], trend["term"]
+        lab, term = trend["label"], trend.get("name", trend["term"]).lower()
         if lab == "Rising":
             score -= 10
             reasons.append(f"The radar says {term} is rising fast: buying near the top of the hype is a risk.")

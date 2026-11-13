@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Fashion Dictionary · The Daily Thread{% endblock %}
+{% block content %}
+<section class="lead">
+  <article>
+    <p class="kicker">Fashion Dictionary</p>
+    <h1>The words behind the radar</h1>
+    <p class="standfirst">Every term The Daily Thread tracks, with what it means, what else people call it and where it sits. Definitions are written for this site and have not yet been reviewed by an editor.</p>
+  </article>
+</section>
+
+<form class="search-form" method="get" role="search">
+  <label for="q" class="sr-only">Search the dictionary</label>
+  <input id="q" name="q" value="{{ q }}" maxlength="60" placeholder="Search a term or another name for it, e.g. stealth wealth">
+  <button class="button" type="submit">Search</button>
+  {% if q %}<a href="{{ url_for('dictionary') }}">Clear</a>{% endif %}
+</form>
+<p class="coverage">{{ count }} term{{ '' if count == 1 else 's' }}{% if q %} matching &ldquo;{{ q }}&rdquo;{% endif %}.</p>
+
+{% for heading, terms in groups.items() %}
+<section class="block dict-group">
+  <h2>{{ heading }}</h2>
+  <dl class="entries">
+    {% for t in terms %}{% set r = radar.get(t.slug) %}
+    <dt id="{{ t.slug }}">
+      {% if r %}<a href="{{ url_for('trend', term_slug=t.slug) }}">{{ t.name }}</a> <span class="tag tag-{{ r.label|lower }}">{{ r.label }}</span>{% else %}{{ t.name }} <span class="meta-inline">no search data yet</span>{% endif %}
+    </dt>
+    <dd>{{ t.definition }}{% if t.aliases %} <span class="meta-inline">Also called {{ t.aliases|join(', ') }}.</span>{% endif %}</dd>
+    {% endfor %}
+  </dl>
+</section>
+{% else %}
+<p class="empty">No term matches &ldquo;{{ q }}&rdquo;. Try a broader word such as &ldquo;jeans&rdquo; or &ldquo;boots&rdquo;.</p>
+{% endfor %}
+{% endblock %}

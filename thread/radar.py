@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 from .colours import FAMILIES, nearest_family, palette_profile
+from .dictionary import Dictionary
+from .dictionary import load as load_dictionary
 from .snapshots import latest_published
 from .trends import LABELS, classify, wiki_yoy, window_change
 
@@ -47,16 +49,18 @@ def _season_dates(sid: str, window: List[str]) -> tuple[str, str]:
 
 
 class Radar:
-    def __init__(self, snapshot: Path, terms_file: Path = DATA / "terms.json", palettes_file: Path = DATA / "palettes.json"):
+    def __init__(self, snapshot: Path, dictionary: Optional[Dictionary] = None,
+                 palettes_file: Path = DATA / "palettes.json"):
         self.snapshot_path = snapshot
         self.snap = json.loads(snapshot.read_text(encoding="utf-8"))
-        self.terms = json.loads(terms_file.read_text(encoding="utf-8"))["terms"]
+        self.dictionary = dictionary or load_dictionary()
+        self.terms = self.dictionary.tracked()      # term = Google query = snapshot key; name = display name
         self.palettes = json.loads(palettes_file.read_text(encoding="utf-8"))
         self.as_of = snapshot.stem          # the day the snapshot was published
         self.items = self._items()
         ends = [s["dates"][-1] for s in self.snap["google"].values() if s.get("dates")]
         self.data_to = max(ends) if ends else self.as_of   # last complete week of search data
-        self.missing = [t["term"] for t in self.terms if t["term"] not in self.snap["google"]]
+        self.missing = [t["name"] for t in self.terms if t["term"] not in self.snap["google"]]
 
     # ------------------------------------------------------------------ terms
     def _items(self) -> List[Dict]:
@@ -71,7 +75,7 @@ class Radar:
             agrees = None
             if w_yoy is not None and sig.yoy is not None:
                 agrees = (w_yoy > 0) == (sig.yoy > 0)
-            out.append({**t, "slug": slug(t["term"]), **sig.as_dict(), "wiki_yoy": w_yoy, "wiki_agrees": agrees,
+            out.append({**t, **sig.as_dict(), "wiki_yoy": w_yoy, "wiki_agrees": agrees,
                         "spark": sparkline(s["values"][-104:]), "last_week": s["dates"][-1],
                         "collected_at": s.get("collected_at"), "carried_from": s.get("carried_from")})
         order = {name: i for i, name in enumerate(LABELS)}
