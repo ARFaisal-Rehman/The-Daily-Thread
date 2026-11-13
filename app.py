@@ -15,6 +15,7 @@ from flask import Flask, abort, g, redirect, render_template, request, session, 
 
 from thread.colours import nearest_family
 from thread.radar import get_radar, sparkline
+from thread.trends import METHODOLOGY_VERSION
 
 ROOT = Path(__file__).resolve().parent
 KINDS = ["Top", "Bottom", "Dress", "Outerwear", "Shoes", "Accessory"]
@@ -104,8 +105,10 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         solid = [i for i in items if not i["low_volume"] and i["yoy"] is not None]
         lead = max(solid, key=lambda x: x["yoy"], default=None)
         falling = min(solid, key=lambda x: x["yoy"], default=None)
+        coverage = {"shown": len(r.items), "tracked": len(r.terms), "missing": r.missing,
+                    "carried": sum(1 for i in r.items if i["carried_from"])}
         return render_template("front.html", groups=groups, lead=lead, falling=falling,
-                               categories=r.categories(), category=cat, total=len(items))
+                               categories=r.categories(), category=cat, total=len(items), coverage=coverage)
 
     @app.route("/trend/<term_slug>")
     def trend(term_slug: str):
@@ -129,7 +132,10 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
 
     @app.route("/method")
     def method():
-        return render_template("method.html")
+        r = get_radar(app.config["SNAPSHOTS"])
+        run = r.snap.get("run") if r else None
+        failed = sorted((tag.split(":", 1) + [why] for tag, why in (run or {}).get("failed", {}).items()))
+        return render_template("method.html", run=run, failed=failed, version=METHODOLOGY_VERSION)
 
     # --------------------------------------------------------------- wardrobe
     @app.route("/wardrobe", methods=["GET", "POST"])

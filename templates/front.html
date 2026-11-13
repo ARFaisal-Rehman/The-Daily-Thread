@@ -31,6 +31,7 @@
   <a href="{{ url_for('front') }}" class="chip" {% if not category %}aria-current="true"{% endif %}>All {{ total if not category else '' }}</a>
   {% for c in categories %}<a class="chip" href="{{ url_for('front', category=c) }}" {% if category == c %}aria-current="true"{% endif %}>{{ c }}</a>{% endfor %}
 </form>
+<p class="coverage">{{ coverage.shown }} of {{ coverage.tracked }} terms have data &middot; {{ coverage.carried }} carried from an older refresh &middot; {{ coverage.missing|length }} unavailable{% if coverage.missing and coverage.missing|length <= 6 %}: {{ coverage.missing|join(', ') }}{% endif %}. <a href="{{ url_for('method') }}#last-refresh">Refresh log</a></p>
 
 <div class="columns">
   <section aria-labelledby="h-in">

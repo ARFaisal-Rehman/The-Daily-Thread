@@ -22,6 +22,7 @@ from typing import List, Optional, Sequence
 
 import numpy as np
 
+METHODOLOGY_VERSION = "1.0"   # bump whenever a rule or threshold below changes
 WINDOW = 12
 YEAR = 52
 RISING, FADING, OUT_YOY, OUT_PEAK, PEAK = 0.25, -0.10, -0.25, 0.40, 0.80

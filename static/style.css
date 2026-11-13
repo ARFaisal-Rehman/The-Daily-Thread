@@ -65,6 +65,7 @@ h3.tag { margin: 18px 0 6px; }
 .trend-row .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .trend-row .meta, .meta { display: block; font-size: .78rem; color: var(--muted); }
 .stale { color: var(--fading); font-style: italic; }
+.coverage { font-size: .82rem; color: var(--muted); margin: -10px 0 18px; }
 .spark { width: 96px; height: 28px; }
 .spark path { fill: none; stroke: var(--ink); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
 .empty { color: var(--muted); font-style: italic; }

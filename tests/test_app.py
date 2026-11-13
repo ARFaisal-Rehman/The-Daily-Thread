@@ -55,6 +55,29 @@ def test_dateline_shows_when_the_data_ends_not_the_file_date(client):
     assert "refreshed 13 Nov 2026" in html
 
 
+def test_front_page_states_coverage(client):
+    html = client.get("/").get_data(as_text=True)
+    assert "3 of 36 terms have data" in html                 # fixture has 3 of the 36 tracked terms
+    assert "1 carried from an older refresh" in html
+    assert "33 unavailable" in html
+
+
+def test_method_page_reports_the_last_refresh(tmp_path):
+    snaps = tmp_path / "s"
+    snaps.mkdir()
+    snap = {"fetched": "2026-11-13T09:00+00:00", "geo": "worldwide", "colours": {}, "wiki": {},
+            "google": {"barrel jeans": weekly([10] * 118 + [40] * 12)},
+            "run": {"methodology_version": "1.0", "started": "2026-11-13T08:00+00:00",
+                    "finished": "2026-11-13T09:00+00:00", "attempted": 5, "ok": 3,
+                    "failed": {"google:trench coat": "rate_limited: TooManyRequestsError",
+                               "wiki:Trench_coat": "error: ConnectionError: offline"}}}
+    (snaps / "2026-11-13.json").write_text(json.dumps(snap), encoding="utf-8")
+    html = make_app(tmp_path, snaps).test_client().get("/method").get_data(as_text=True)
+    assert "Methodology version 1.0" in html
+    assert "3 of 5 series fetched" in html
+    assert "trench coat" in html and "rate_limited" in html
+
+
 def test_carried_forward_terms_say_how_old_they_are(client):
     html = client.get("/").get_data(as_text=True)
     assert "data from 6 Nov 2026 (last refresh failed)" in html

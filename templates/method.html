@@ -35,6 +35,19 @@
   <h2>Colours</h2>
   <p>Nobody searches for &ldquo;Arabian Spice&rdquo;. Each Pantone colour is matched to the nearest of about forty everyday colour words (&ldquo;rust&rdquo;, &ldquo;sage green&rdquo;) by distance in CIELAB, a colour space built to match human perception. Search interest for &ldquo;&lt;word&gt; outfit&rdquo; during the season is compared with the same dates a year earlier. The palette summary uses HSL lightness and saturation; a colour counts as neutral below 12% saturation and as warm when its hue sits in the reds, oranges and yellows.</p>
 
+  <h2 id="last-refresh">The last refresh</h2>
+  {% if run %}
+  <p>Methodology version {{ run.methodology_version }}. The refresh ran from {{ run.started[:16]|replace('T', ' ') }} to {{ (run.finished or run.started)[:16]|replace('T', ' ') }} UTC: {{ run.ok }} of {{ run.attempted }} series fetched. Anything not fetched was kept from the previous snapshot and is marked with its date wherever it appears.</p>
+  {% if failed %}
+  <table class="signals">
+    <caption>Not fetched in this run</caption>
+    <tbody>{% for source, key, why in failed %}<tr><th scope="row">{{ key }} <span class="meta">{{ source }}</span></th><td>{{ why }}</td></tr>{% endfor %}</tbody>
+  </table>
+  {% endif %}
+  {% else %}
+  <p>Methodology version {{ version }}. This snapshot was collected before refresh logs were added, so there is no record of what failed.</p>
+  {% endif %}
+
   <h2>Limits</h2>
   <ul>
     <li>Search interest measures curiosity, not sales. A term can be searched because people are mocking it.</li>
