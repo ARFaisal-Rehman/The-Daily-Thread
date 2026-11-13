@@ -9,7 +9,43 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from thread.colours import delta_e, nearest_family, palette_profile  # noqa: E402
-from thread.trends import classify, wiki_yoy, window_change  # noqa: E402
+from thread.trends import METHODOLOGY_VERSION, assess, classify, wiki_yoy, window_change  # noqa: E402
+
+
+def emerging_series(weeks=130):
+    """Flat at 40, last year's same weeks at 40, then the last 12 weeks climbing from 40 to ~54."""
+    v = [40.0] * weeks
+    v[-12:] = [40 + 1.2 * i for i in range(12)]        # mean ~46.6 (+16% YoY), slope 1.2/wk (~2.6%)
+    v[30:42] = [60.0] * 12                              # an earlier high, so it is not "Peaking"
+    return v
+
+
+def test_emerging_is_a_rise_not_yet_big_enough_for_rising():
+    sig = classify(emerging_series())
+    assert sig.label == "Emerging"
+    assert 0.10 <= sig.yoy < 0.25 and sig.momentum > 0.02
+
+
+def test_methodology_version_changed_with_the_rules():
+    assert METHODOLOGY_VERSION == "1.1"
+
+
+def test_confidence_is_high_only_for_a_strong_label_held_four_weeks():
+    v = [20.0] * 100 + [60.0] * 30                      # +200% for 30 weeks: Rising, strong, long-held
+    a = assess(v)
+    assert a.label == "Rising" and a.weeks_held >= 4 and a.confidence == "High"
+
+    fresh = [20.0] * 118 + [60.0] * 12                  # just turned Rising: not held long enough... yet
+    assert assess(fresh[:-9]).confidence == "Lower"
+
+
+def test_confidence_is_not_given_for_labels_the_backtest_does_not_cover():
+    assert assess(emerging_series()).confidence is None   # Emerging, Stable, Peaking: no confidence claim
+
+
+def test_low_volume_caps_confidence():
+    v = [1.0] * 100 + [4.0] * 30
+    assert assess(v).confidence == "Lower"
 
 
 def series(last_year: float, this_year: float, weeks: int = 130, peak: float | None = None):

@@ -26,11 +26,14 @@
       <tr><th scope="row"><span class="tag tag-rising">Rising</span></th><td>up 25% or more on last year</td></tr>
       <tr><th scope="row"><span class="tag tag-out">Out</span></th><td>down 25% or more and under 40% of its five-year high</td></tr>
       <tr><th scope="row"><span class="tag tag-fading">Fading</span></th><td>down 10% or more</td></tr>
+      <tr><th scope="row"><span class="tag tag-emerging">Emerging</span></th><td>up 10 to 25% and still climbing (the last 12 weeks rise by more than 2% a week)</td></tr>
       <tr><th scope="row"><span class="tag tag-peaking">Peaking</span></th><td>at 80% or more of its five-year high</td></tr>
       <tr><th scope="row"><span class="tag tag-stable">Stable</span></th><td>everything else</td></tr>
     </tbody>
   </table>
   <p>Terms averaging under 5 on Google's scale are flagged low volume: one viral week can swing them.</p>
+  <p><strong>Confidence.</strong> Rising, Fading and Out labels say <em>high confidence</em> when the label has held for at least 4 weeks <em>and</em> the move is strong (up 50% or more, or down 25% or more), and <em>lower confidence</em> otherwise or when volume is low. That is a quality indicator, not a probability. Emerging, Peaking and Stable carry no confidence level because the backtest gives no evidence for one.</p>
+  <p><strong>How these rules were chosen (version {{ version }}).</strong> Emerging and the confidence levels were added after testing them on each term's own history: picked using data before 2025, then checked on 2025 and 2026, which they had not seen. A third idea, making labels &ldquo;sticky&rdquo; so they change less often, was rejected because it made them less accurate.</p>
 
   <h2>Colours</h2>
   <p>Nobody searches for &ldquo;Arabian Spice&rdquo;. Each Pantone colour is matched to the nearest of about forty everyday colour words (&ldquo;rust&rdquo;, &ldquo;sage green&rdquo;) by distance in CIELAB, a colour space built to match human perception. Search interest for &ldquo;&lt;word&gt; outfit&rdquo; during the season is compared with the same dates a year earlier. The palette summary uses HSL lightness and saturation; a colour counts as neutral below 12% saturation and as warm when its hue sits in the reds, oranges and yellows.</p>
@@ -47,7 +50,12 @@
     <li><strong>Rising holds.</strong> {{ "{:.0%}".format(bt.rising_precision) }} of Rising labels were still up 25% or more {{ bt.horizon_weeks }} weeks later, against {{ "{:.0%}".format(bt.base_rate_rising) }} for all weeks: {{ bt.rising_lift }} times the base rate.</li>
     <li><strong>Fading and Out hold.</strong> {{ "{:.0%}".format(bt.falling_precision) }} were still down 10% or more, against {{ "{:.0%}".format(bt.base_rate_falling) }}: {{ bt.falling_lift }} times the base rate.</li>
     <li><strong>Labels are stable.</strong> A term's label changes from one week to the next {{ "{:.1%}".format(bt.flip_rate) }} of the time.</li>
+    {% if bt.emerging and bt.emerging.n %}<li><strong>Emerging is an early signal.</strong> {{ "{:.0%}".format(bt.emerging.hit_share) }} of Emerging labels reached Rising strength within {{ bt.horizon_weeks }} weeks, against {{ "{:.0%}".format(bt.emerging.base_rate) }} for every week not already Rising.</li>{% endif %}
+    {% if bt.confidence %}<li><strong>Confidence separates firm labels from shaky ones.</strong> High-confidence Rising labels held {{ "{:.0%}".format(bt.confidence.Rising.High.hit_share) }} of the time against {{ "{:.0%}".format(bt.confidence.Rising.Lower.hit_share) }} for lower confidence; for Fading and Out, {{ "{:.0%}".format(bt.confidence.Falling.High.hit_share) }} against {{ "{:.0%}".format(bt.confidence.Falling.Lower.hit_share) }}.</li>{% endif %}
   </ul>
+  {% if bt.holdout and bt.holdout.emerging.n %}
+  <p><strong>Out-of-sample check.</strong> The Emerging and confidence rules were chosen using weeks before {{ bt.holdout.from|nice_date }}. On the {{ "{:,}".format(bt.holdout.observations) }} label-weeks since, which they had not seen: Emerging reached Rising strength {{ "{:.0%}".format(bt.holdout.emerging.hit_share) }} of the time against {{ "{:.0%}".format(bt.holdout.emerging.base_rate) }}; high-confidence Rising labels held {{ "{:.0%}".format(bt.holdout.confidence.Rising.High.hit_share) }} against {{ "{:.0%}".format(bt.holdout.confidence.Rising.Lower.hit_share) }}. Weaker than on the data used to choose them, as expected, but the signal held.</p>
+  {% endif %}
   <p><strong>What this does not show.</strong> The labels capture momentum that usually lasts a few more months; they do not predict which new item will break out next. Weekly observations of the same term overlap, so they are not independent, and the term list was chosen in 2026 with hindsight, which flatters how often terms keep rising.</p>
   {% else %}
   <p>No backtest has been run on this snapshot yet. Run <code>python scripts/backtest_labels.py</code>.</p>

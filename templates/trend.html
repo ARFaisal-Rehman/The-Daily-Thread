@@ -32,6 +32,8 @@
       <tr><th scope="row">Last 12 weeks, mean interest</th><td>{{ item.recent }}</td></tr>
       <tr><th scope="row">Same weeks last year</th><td>{{ item.prior if item.prior is not none else 'n/a' }}</td></tr>
       <tr><th scope="row">Year-on-year change</th><td>{{ item.yoy|pct }}</td></tr>
+      <tr><th scope="row">Weeks this label has held (up to 12)</th><td>{{ item.weeks_held }}</td></tr>
+      <tr><th scope="row">Confidence</th><td>{% if item.confidence %}{{ item.confidence }}{% else %}not assessed for {{ item.label }}{% endif %}</td></tr>
       <tr><th scope="row">Momentum (slope of last 12 weeks, per week)</th><td>{{ item.momentum|pct }}</td></tr>
       <tr><th scope="row">Share of five-year high</th><td>{{ '%.0f'|format(item.vs_peak * 100) }}%</td></tr>
       <tr><th scope="row">Wikipedia page views, last 3 months vs a year earlier</th><td>{% if item.wiki %}{{ item.wiki_yoy|pct }} (<a href="https://en.wikipedia.org/wiki/{{ item.wiki }}">{{ item.wiki|replace('_', ' ') }}</a>){% else %}No article tracked{% endif %}</td></tr>

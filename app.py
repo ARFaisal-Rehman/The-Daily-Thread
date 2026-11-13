@@ -20,7 +20,7 @@ from thread.trends import METHODOLOGY_VERSION
 
 ROOT = Path(__file__).resolve().parent
 KINDS = ["Top", "Bottom", "Dress", "Outerwear", "Shoes", "Accessory"]
-ORDER = ["Rising", "Peaking", "Stable", "Fading", "Out"]
+ORDER = ["Rising", "Emerging", "Peaking", "Stable", "Fading", "Out"]
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS wardrobe (
@@ -261,6 +261,9 @@ def mindful_score(form, trend: dict | None, owned_same_kind: int) -> dict:
         if lab == "Rising":
             score -= 10
             reasons.append(f"The radar says {term} is rising fast: buying near the top of the hype is a risk.")
+        elif lab == "Emerging":
+            score -= 5
+            reasons.append(f"The radar shows early signs that {term} is rising; it may or may not take off.")
         elif lab in ("Fading", "Out"):
             score -= 5
             reasons.append(f"The radar says {term} is {lab.lower()}: fine if you love it, not if it's for the trend.")

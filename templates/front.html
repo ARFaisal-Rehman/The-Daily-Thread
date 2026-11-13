@@ -6,7 +6,7 @@
     <svg class="spark" viewBox="0 0 120 32" role="img" aria-label="Weekly search interest over the last two years for {{ i.name }}"><path d="{{ i.spark }}"/></svg>
     <span class="num">{{ i.yoy|pct }}</span>
   </a>
-  <span class="meta">{{ i.category }}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}{% if i.carried_from %} &middot; <span class="stale">data from {{ i.collected_at|nice_date }} (last refresh failed)</span>{% endif %}</span>
+  <span class="meta">{{ i.category }}{% if i.confidence %} &middot; {{ i.confidence|lower }} confidence{% endif %}{% if i.low_volume %} &middot; low volume{% endif %}{% if i.wiki_agrees is not none %} &middot; Wikipedia {{ 'agrees' if i.wiki_agrees else 'disagrees' }} ({{ i.wiki_yoy|pct }}){% endif %}{% if i.carried_from %} &middot; <span class="stale">data from {{ i.collected_at|nice_date }} (last refresh failed)</span>{% endif %}</span>
 </li>
 {% endmacro %}
 {% block content %}
@@ -36,8 +36,8 @@
 <div class="columns">
   <section aria-labelledby="h-in">
     <h2 id="h-in" class="col-head">In</h2>
-    <p class="col-note">Rising: searches up 25% or more on last year. Peaking: near a five-year high.</p>
-    {% for lab in ['Rising', 'Peaking'] %}{% if groups[lab] %}
+    <p class="col-note">Rising: searches up 25% or more on last year. Emerging: up 10 to 25% and still climbing. Peaking: near a five-year high.</p>
+    {% for lab in ['Rising', 'Emerging', 'Peaking'] %}{% if groups[lab] %}
     <h3 class="tag tag-{{ lab|lower }}">{{ lab }}</h3>
     <ul class="trend-list">{% for i in groups[lab] %}{{ row(i) }}{% endfor %}</ul>
     {% endif %}{% endfor %}

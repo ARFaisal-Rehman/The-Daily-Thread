@@ -1,5 +1,5 @@
 {
- "methodology_version": "1.0",
+ "methodology_version": "1.1",
  "horizon_weeks": 12,
  "terms": 33,
  "skipped": [],
@@ -10,15 +10,20 @@
    "still_up_share": 0.931,
    "median_future_yoy": 0.577
   },
+  "Emerging": {
+   "n": 239,
+   "still_up_share": 0.946,
+   "median_future_yoy": 0.229
+  },
   "Peaking": {
-   "n": 1270,
-   "still_up_share": 0.824,
-   "median_future_yoy": 0.146
+   "n": 1125,
+   "still_up_share": 0.805,
+   "median_future_yoy": 0.133
   },
   "Stable": {
-   "n": 996,
-   "still_up_share": 0.653,
-   "median_future_yoy": 0.07
+   "n": 902,
+   "still_up_share": 0.625,
+   "median_future_yoy": 0.057
   },
   "Fading": {
    "n": 994,
@@ -36,9 +41,108 @@
  "base_rate_rising": 0.438,
  "falling_precision": 0.668,
  "base_rate_falling": 0.185,
- "flip_rate": 0.054,
  "rising_lift": 1.76,
  "falling_lift": 3.61,
+ "emerging": {
+  "n": 239,
+  "hit_share": 0.439,
+  "base_rate": 0.185,
+  "lift": 2.37
+ },
+ "confidence": {
+  "Rising": {
+   "Lower": {
+    "n": 1044,
+    "hit_share": 0.657
+   },
+   "High": {
+    "n": 1570,
+    "hit_share": 0.844
+   }
+  },
+  "Falling": {
+   "Lower": {
+    "n": 811,
+    "hit_share": 0.594
+   },
+   "High": {
+    "n": 345,
+    "hit_share": 0.841
+   }
+  }
+ },
+ "flip_rate": 0.065,
+ "holdout": {
+  "from": "2025-01-01",
+  "observations": 2772,
+  "labels": {
+   "Rising": {
+    "n": 1405,
+    "still_up_share": 0.932,
+    "median_future_yoy": 0.547
+   },
+   "Emerging": {
+    "n": 139,
+    "still_up_share": 0.935,
+    "median_future_yoy": 0.193
+   },
+   "Peaking": {
+    "n": 333,
+    "still_up_share": 0.898,
+    "median_future_yoy": 0.174
+   },
+   "Stable": {
+    "n": 411,
+    "still_up_share": 0.689,
+    "median_future_yoy": 0.108
+   },
+   "Fading": {
+    "n": 339,
+    "still_up_share": 0.286,
+    "median_future_yoy": -0.093
+   },
+   "Out": {
+    "n": 145,
+    "still_up_share": 0.124,
+    "median_future_yoy": -0.383
+   }
+  },
+  "base_rate_up": 0.771,
+  "rising_precision": 0.779,
+  "base_rate_rising": 0.516,
+  "falling_precision": 0.579,
+  "base_rate_falling": 0.154,
+  "rising_lift": 1.51,
+  "falling_lift": 3.76,
+  "emerging": {
+   "n": 139,
+   "hit_share": 0.417,
+   "base_rate": 0.246,
+   "lift": 1.7
+  },
+  "confidence": {
+   "Rising": {
+    "High": {
+     "n": 874,
+     "hit_share": 0.827
+    },
+    "Lower": {
+     "n": 531,
+     "hit_share": 0.701
+    }
+   },
+   "Falling": {
+    "Lower": {
+     "n": 316,
+     "hit_share": 0.446
+    },
+    "High": {
+     "n": 168,
+     "hit_share": 0.827
+    }
+   }
+  }
+ },
  "snapshot": "2026-11-13",
  "generated": "2026-11-13"
 }

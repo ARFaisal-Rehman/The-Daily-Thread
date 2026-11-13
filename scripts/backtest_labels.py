@@ -24,7 +24,8 @@ def main() -> None:
     if snap_path is None:
         sys.exit("No published snapshot. Run scripts/refresh_trends.py first.")
     snap = json.loads(snap_path.read_text(encoding="utf-8"))
-    res = backtest({term: s["values"] for term, s in snap["google"].items()})
+    res = backtest({term: s["values"] for term, s in snap["google"].items()},
+                   dates={term: s["dates"] for term, s in snap["google"].items()}, split="2025-01-01")
     res.update({"snapshot": snap_path.stem, "generated": date.today().isoformat()})
     (DATA / "backtest.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
 
@@ -37,6 +38,12 @@ def main() -> None:
     print(f"Fading/Out -> still -10%: {res['falling_precision']:.0%} vs base rate {res['base_rate_falling']:.0%} "
           f"(lift {res['falling_lift']})")
     print(f"Label changes week to week: {res['flip_rate']:.1%}")
+    for name, part in [("all weeks", res), (f"holdout from {res['holdout']['from']}", res["holdout"])]:
+        e = part["emerging"]
+        print(f"\n[{name}] Emerging -> Rising strength in 12 wk: {e['hit_share']:.0%} (n={e['n']}) "
+              f"vs base {e['base_rate']:.0%}, lift {e['lift']}")
+        for group, tiers in part["confidence"].items():
+            print(f"  {group}: " + " | ".join(f"{t} n={v['n']} {v['hit_share']:.0%}" for t, v in tiers.items()))
 
 
 if __name__ == "__main__":

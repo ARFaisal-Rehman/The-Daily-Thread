@@ -42,6 +42,26 @@ def test_base_rates_are_reported_for_comparison():
     assert res["rising_lift"] == round(res["rising_precision"] / res["base_rate_rising"], 2)
 
 
+def climbing(n=170):
+    """Flat at 40 for 100 weeks, then +1.5 a week: passes through Emerging on its way to Rising."""
+    return [40.0] * 100 + [40 + 1.5 * i for i in range(1, n - 99)]
+
+
+def test_emerging_and_confidence_are_measured():
+    res = backtest({"c": climbing()}, horizon=12)
+    assert res["emerging"]["n"] > 0 and res["emerging"]["hit_share"] == 1.0   # every Emerging went on to Rising
+    assert set(res["confidence"]["Rising"]) <= {"High", "Lower"}
+    assert res["confidence"]["Rising"]["High"]["n"] > 0
+
+
+def test_holdout_reports_only_weeks_after_the_split():
+    v = climbing()
+    dates = [f"{2022 + i // 52}-{1 + (i % 52) // 5:02d}-01" for i in range(len(v))]  # rough, increasing dates
+    res = backtest({"c": v}, horizon=12, dates={"c": dates}, split="2024-01-01")
+    assert res["holdout"]["from"] == "2024-01-01"
+    assert res["holdout"]["observations"] < res["observations"]
+
+
 def test_short_series_are_skipped_not_crashed():
     res = backtest({"short": [1.0] * 40, "a": steady_growth()}, horizon=12)
     assert res["terms"] == 1 and res["skipped"] == ["short"]

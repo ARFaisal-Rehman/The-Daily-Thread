@@ -12,7 +12,7 @@ from .colours import FAMILIES, nearest_family, palette_profile
 from .dictionary import Dictionary
 from .dictionary import load as load_dictionary
 from .snapshots import latest_published
-from .trends import LABELS, classify, wiki_yoy, window_change
+from .trends import LABELS, assess, wiki_yoy, window_change
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 
@@ -69,7 +69,7 @@ class Radar:
             s = self.snap["google"].get(t["term"])
             if not s:
                 continue
-            sig = classify(s["values"])
+            sig = assess(s["values"])
             wiki = self.snap["wiki"].get(t.get("wiki", ""), None)
             w_yoy = wiki_yoy(wiki["months"], wiki["views"]) if wiki else None
             agrees = None

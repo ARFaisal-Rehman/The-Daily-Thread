@@ -41,6 +41,7 @@ h1 a, h2 a { text-decoration: none; }
 .tag { display: inline-block; font: 700 .72rem/1 var(--sans); text-transform: uppercase; letter-spacing: .08em; padding: 5px 8px; border-radius: 3px; }
 .tag-rising { color: var(--rising); background: var(--rising-bg); }
 .tag-peaking { color: var(--peaking); background: var(--peaking-bg); }
+.tag-emerging { color: #1d5a73; background: #dfedf2; }
 .tag-stable { color: var(--stable); background: var(--stable-bg); }
 .tag-fading { color: var(--fading); background: var(--fading-bg); }
 .tag-out { color: var(--out); background: var(--out-bg); }

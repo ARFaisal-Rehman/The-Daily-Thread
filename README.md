@@ -42,7 +42,7 @@
 
 The Daily Thread reads public search data and tells you, in newspaper form:
 
-1. **What is in and what is out.** 36 fashion terms (denim cuts, shoes, aesthetics, pieces), each labelled Rising, Peaking, Stable, Fading or Out from five years of weekly Google Trends data, with Wikipedia page views as a second opinion.
+1. **What is in and what is out.** 36 fashion terms from the project's own Fashion Dictionary (each with a definition, other names and a place in a category tree), labelled Rising, Emerging, Peaking, Stable, Fading or Out from five years of weekly Google Trends data, with a confidence level, Wikipedia page views as a second opinion, and every rule backtested.
 2. **The colours of the season.** Pantone's New York Fashion Week palette for the current season, whether people are actually searching for those colours compared with a year ago, what changed from last season's palette, and a preview of next season.
 3. **Whether to buy it.** A wardrobe you can fill in and a five-question purchase check that scores a planned buy, using the radar (buying a Rising style means buying near the top of the hype).
 
@@ -63,7 +63,7 @@ Every label comes from a written rule, shown on the site's How It Works page.
 ## How It Works
 
 ```
-data/terms.json ──┐                                   ┌──► Trend Radar  (In / Holding / Out)
+data/dictionary.json┐                                   ┌──► Trend Radar  (In / Holding / Out)
                   ├─► scripts/refresh_trends.py ──────┤
 Pantone reports ──┤     Google Trends, 5 y weekly     │    thread/trends.py
  (build_palettes) │     Wikipedia, monthly views      ├──► Term page    (chart + signals)
@@ -87,8 +87,11 @@ data/palettes.json┘            ▼                      │    thread/colours.
 | Rising | year on year +25% or more |
 | Out | year on year -25% or less and under 40% of the five-year high |
 | Fading | year on year -10% or less |
+| Emerging | year on year +10% to +25% and momentum above +2% a week (added in methodology 1.1) |
 | Peaking | 80% or more of the five-year high |
 | Stable | anything else |
+
+**Confidence** (Rising, Fading, Out only): *High* when the label has held 4+ weeks and the move is strong (+50% or -25% or more), otherwise *Lower*; low volume is always Lower. Emerging, Peaking and Stable get no confidence level because the backtest gives no evidence for one. A quality indicator, not a probability.
 
 Terms averaging under 5 on Google's scale are flagged low volume. If the term has a Wikipedia article, the last three months of views against the same months a year earlier is shown beside the label, with whether it points the same way.
 
@@ -119,12 +122,17 @@ From the committed snapshot of 13 November 2026 (worldwide). Reproduce with `pyt
 | Label | Weeks | Still up year on year 12 weeks later | Median year-on-year change then |
 |---|---|---|---|
 | Rising | 2,614 | 93% | +58% |
-| Peaking | 1,270 | 82% | +15% |
-| Stable | 996 | 65% | +7% |
+| Emerging | 239 | 95% | +23% |
+| Peaking | 1,125 | 80% | +13% |
+| Stable | 902 | 62% | +6% |
 | Fading | 994 | 16% | -14% |
 | Out | 162 | 18% | -37% |
 
-77% of Rising labels were still up 25% or more 12 weeks later, against 44% for all weeks (1.76 times the base rate); 67% of Fading/Out labels were still down 10% or more, against 18% (3.6 times). Labels change from one week to the next 5.4% of the time. So the labels capture momentum that usually lasts a few more months. They do not predict which new item breaks out next, weekly observations of one term overlap, and the hand-picked 2026 term list flatters them. An earlier quick check that compared the next 12 weeks with the previous 12 suggested the labels were a coin flip; that comparison mixed seasons (autumn vs winter), which the year-on-year version removes.
+77% of Rising labels were still up 25% or more 12 weeks later, against 44% for all weeks (1.76 times the base rate); 67% of Fading/Out labels were still down 10% or more, against 18% (3.6 times). Labels change from one week to the next 6.5% of the time (5.4% before Emerging was added).
+
+**Methodology 1.1: Emerging and confidence, tested out of sample.** Both were chosen using weeks before 2025 and then checked on 2025-26, which they had not seen. Emerging reached Rising strength within 12 weeks 42% of the time there, against a 25% base rate (44% vs 18% over all weeks). High-confidence Rising labels held 83% vs 70% for lower confidence; for Fading/Out, 83% vs 45%. A three-level confidence scale and "sticky" labels (hysteresis) were tried and rejected: the middle level did not hold up on unseen data, and sticky labels changed less often but were less accurate.
+
+ So the labels capture momentum that usually lasts a few more months. They do not predict which new item breaks out next, weekly observations of one term overlap, and the hand-picked 2026 term list flatters them. An earlier quick check that compared the next 12 weeks with the previous 12 suggested the labels were a coin flip; that comparison mixed seasons (autumn vs winter), which the year-on-year version removes.
 
 **The second signal disagrees more often than it agrees.** Wikipedia views point the same way as Google searches for only 5 of the 13 terms with both signals (for example *adidas samba*: Google -14%, Wikipedia -42%; *skinny jeans*: Google +38%, Wikipedia -26%). Encyclopaedia readers and shoppers are different audiences, so the site shows the Wikipedia figure beside each label instead of mixing it into the label.
 
@@ -153,7 +161,7 @@ Against last season (Spring/Summer 2026), the palette swapped beige, burgundy, p
 ```bash
 pip install -r requirements.txt
 python app.py                        # http://localhost:5004, reads the committed snapshot
-python -m pytest                     # 45 tests, no network needed
+python -m pytest                     # 65 tests, no network needed
 ```
 
 Settings are environment variables; see `.env.example`. Without `SECRET_KEY` the app creates one once in `instance/secret_key` (git-ignored), so wardrobes survive restarts.
@@ -167,7 +175,7 @@ python scripts/summarise.py          # prints the tables in this README
 python scripts/build_palettes.py     # re-reads the Pantone reports into data/palettes.json
 ```
 
-Edit `data/terms.json` to track different terms.
+Terms live in `data/dictionary.json` (the Fashion Dictionary): add an entry with an id, name, slug, Google query, category, definition and aliases, and the tests validate it. The Dictionary page lists every term with search by any of its names.
 
 ## Data and Licences
 
@@ -190,6 +198,8 @@ Edit `data/terms.json` to track different terms.
 | A half-finished refresh replaced good data on the site (the app read the newest file, even with 2 of 33 terms) | Draft then publish; misses carried forward and dated |
 | A new random secret key on every start orphaned every reader's wardrobe | Key from `SECRET_KEY` or generated once into `instance/` |
 | "Is a label worth anything?" was untested | Backtest against base rates, year on year so seasons don't distort it |
+| New label ideas can look good just by chance | Chosen on pre-2025 weeks, reported on 2025-26 weeks they had not seen; ideas that failed (hysteresis, a three-level confidence) were dropped |
+| A list of 36 strings had no meaning, aliases or structure | A versioned Fashion Dictionary with stable ids, a category tree and validation; old URLs kept |
 
 ## Roadmap
 
@@ -197,7 +207,7 @@ Edit `data/terms.json` to track different terms.
 - A scheduled weekly refresh (GitHub Actions) that commits the new snapshot.
 - Reddit mentions as a third signal for users who add their own API key.
 - The social side of the original idea: a feed where people post outfits and react, on top of the existing SQLite store. The original virtual pet is retired.
-- A Fashion Dictionary: terms with IDs, aliases, definitions and a category tree in SQLite, replacing the 36-string list, plus Emerging, smoothing and confidence labels tuned with the backtest.
+- Grow the Fashion Dictionary beyond 36 terms (materials, bags, accessories) and have its definitions reviewed by an editor.
 - Brand Watch: brand search interest, Wikipedia and news attention, with group-level company financials kept separate.
 - A news desk from GDELT and permitted RSS feeds, deduplicated and tagged by brand.
 
