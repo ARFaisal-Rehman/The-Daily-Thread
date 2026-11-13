@@ -57,6 +57,34 @@ def test_validation_rejects_broken_entries(tmp_path, mutate, message):
         load(*write(tmp_path, reg, facts))
 
 
+def two_lyst_editions(tmp_path):
+    reg, facts = raw()
+    q3 = facts["lyst"][0]
+    q1 = {**copy.deepcopy(q3), "edition": "Q1 2027", "retrieved": "2027-02-10",
+          "ranks": [{**q3["ranks"][1], "rank": 1}, {**q3["ranks"][0], "rank": 2}]}
+    facts["lyst"] = [q1, q3]                                    # file order must not matter
+    return load(*write(tmp_path, reg, facts))
+
+
+def test_latest_lyst_is_the_newest_retrieved_not_the_last_label(tmp_path):
+    data = two_lyst_editions(tmp_path)
+    assert data.lyst["edition"] == "Q1 2027"                    # "Q1 2027" sorts before "Q3 2026" as text
+
+
+def test_lyst_for_a_day_is_the_edition_known_on_that_day(tmp_path):
+    data = two_lyst_editions(tmp_path)
+    assert data.lyst_for("2026-11-13")["edition"] == "Q3 2026"
+    assert data.lyst_for("2027-03-01")["edition"] == "Q1 2027"
+    assert data.lyst_for("2026-11-12") == {}                    # nothing entered yet
+
+
+def test_watch_as_of_a_day_uses_that_days_lyst(tmp_path):
+    data = two_lyst_editions(tmp_path)
+    prada = data.by_slug["prada"].slug
+    assert BrandWatch({}, data).row(prada)["lyst_rank"] == 2
+    assert BrandWatch({}, data, as_of="2026-11-13").row(prada)["lyst_rank"] == 1
+
+
 @pytest.fixture()
 def watch():
     data = load()

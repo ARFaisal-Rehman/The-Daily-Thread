@@ -177,10 +177,10 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
 
     def edition_page(r):
         data = load_brands()
-        watch = BrandWatch(r.snap, data, today=r.as_of)
+        watch = BrandWatch(r.snap, data, today=r.as_of, as_of=r.as_of)
         items = [i for f in r.snap.get("news", {}).values() for i in f.get("items", [])]
         stories = [s for _, day in desk(items, news_tags(r, data), today=r.as_of)["days"] for s in day]
-        ed = build_edition(r.as_of, r.items, watch.rows(), data.lyst, stories)
+        ed = build_edition(r.as_of, r.items, watch.rows(), watch.lyst, stories)
         return render_template("edition.html", ed=ed, latest=r.as_of == published_days(app.config["SNAPSHOTS"])[0])
 
     @app.route("/edition")

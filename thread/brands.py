@@ -45,12 +45,22 @@ class Brand:
 class BrandData:
     brands: List[Brand]
     groups: Dict[str, Dict]
-    lyst: Dict
+    lyst_editions: List[Dict]                 # oldest first, by the day each was entered
     financials: List[Dict]
 
     def __post_init__(self):
         self.by_id = {b.id: b for b in self.brands}
         self.by_slug = {b.slug: b for b in self.brands}
+
+    @property
+    def lyst(self) -> Dict:
+        """The newest Lyst edition entered, or {} when there is none."""
+        return self.lyst_editions[-1] if self.lyst_editions else {}
+
+    def lyst_for(self, day: Optional[str] = None) -> Dict:
+        """The Lyst edition the site knew on `day` (the newest when day is None), or {}."""
+        known = [e for e in self.lyst_editions if day is None or e["retrieved"] <= day]
+        return known[-1] if known else {}
 
 
 def load(registry: Path = DATA / "brands.json", facts: Path = DATA / "brand_facts.json") -> BrandData:
@@ -73,8 +83,10 @@ def load(registry: Path = DATA / "brands.json", facts: Path = DATA / "brand_fact
         brands.append(b)
 
     ids = {b.id for b in brands}
-    lyst = sorted(fx.get("lyst", []), key=lambda e: e["edition"])[-1] if fx.get("lyst") else {}
-    for edition in fx.get("lyst", []):
+    lyst = sorted(fx.get("lyst", []), key=lambda e: str(e.get("retrieved", "")))
+    for edition in lyst:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(edition.get("retrieved", ""))):
+            problems.append(f"Lyst {edition['edition']}: retrieved must be a YYYY-MM-DD date")
         for r in edition["ranks"]:
             if r["brand"] not in ids:
                 problems.append(f"Lyst {edition['edition']} rank {r['rank']}: unknown brand {r['brand']}")
@@ -120,10 +132,11 @@ def level_break(values: List[float], ratio: float = 2.5) -> Optional[str]:
 
 class BrandWatch:
     def __init__(self, snapshot: Dict, data: Optional[BrandData] = None, today: Optional[str] = None,
-                 news_days: int = 30):
+                 news_days: int = 30, as_of: Optional[str] = None):
         self.data = data or load()
         self.snap = snapshot
-        self.ranks = {r["brand"]: r for r in self.data.lyst.get("ranks", [])}
+        self.lyst = self.data.lyst_for(as_of)   # as_of: show only what was known on that day (editions)
+        self.ranks = {r["brand"]: r for r in self.lyst.get("ranks", [])}
         self.news_days = news_days
         feeds = snapshot.get("news", {})
         items = [i for f in feeds.values() for i in f.get("items", [])]
