@@ -78,6 +78,25 @@ def test_method_page_reports_the_last_refresh(tmp_path):
     assert "trench coat" in html and "rate_limited" in html
 
 
+def test_method_page_shows_the_backtest(tmp_path, client):
+    bt = {"methodology_version": "1.0", "horizon_weeks": 12, "terms": 33, "observations": 6036, "skipped": [],
+          "labels": {"Rising": {"n": 2614, "still_up_share": 0.93, "median_future_yoy": 0.58}},
+          "base_rate_up": 0.6, "rising_precision": 0.77, "base_rate_rising": 0.44, "rising_lift": 1.76,
+          "falling_precision": 0.67, "base_rate_falling": 0.18, "falling_lift": 3.61, "flip_rate": 0.054,
+          "snapshot": "2026-11-13", "generated": "2026-11-13"}
+    path = tmp_path / "backtest.json"
+    path.write_text(json.dumps(bt), encoding="utf-8")
+    client.application.config["BACKTEST"] = path
+    html = client.get("/method").get_data(as_text=True)
+    assert "6,036 label-weeks" in html
+    assert "77%" in html and "44%" in html and "1.76" in html
+
+
+def test_method_page_without_a_backtest_says_so(client, tmp_path):
+    client.application.config["BACKTEST"] = tmp_path / "none.json"
+    assert "No backtest has been run" in client.get("/method").get_data(as_text=True)
+
+
 def test_carried_forward_terms_say_how_old_they_are(client):
     html = client.get("/").get_data(as_text=True)
     assert "data from 6 Nov 2026 (last refresh failed)" in html

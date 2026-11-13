@@ -94,7 +94,9 @@ Terms averaging under 5 on Google's scale are flagged low volume. If the term ha
 
 **Colours.** Nobody searches for "Arabian Spice", so each Pantone colour is matched to the nearest of about 40 everyday colour words ("rust", "sage green") by Delta E in CIELAB. Searches for "&lt;word&gt; outfit" during the season are compared with the same dates a year earlier. Palettes are summarised by mean HSL lightness and saturation and by warm, cool and neutral shares.
 
-**Snapshots.** Google rate-limits scripted requests, so the app never calls it live. `scripts/refresh_trends.py` saves a dated snapshot (resumable: a re-run fetches only what is missing) and the app reads the newest one.
+**Snapshots.** Google rate-limits scripted requests, so the app never calls it live. `scripts/refresh_trends.py` writes a draft (resumable: a re-run fetches only what is missing) and publishes it only when the run ends, merged with the last good snapshot. Anything a run failed to fetch is carried forward and marked with the date it came from, so a blocked refresh never makes the site worse. Each series records its source, query settings and collection date, and each snapshot carries a run log (methodology version, what was attempted, every failure and why), shown on the How It Works page.
+
+**Data sources as adapters.** `thread/providers/` has one small module per source (Google Trends, Wikipedia). Each returns the same result: `ok`, `empty`, `rate_limited`, `invalid` or `error`, plus the query settings and a reason. A network error or an odd response becomes a recorded value, never a crash, and every adapter is tested with saved responses, no internet needed.
 
 ## Results
 
@@ -111,6 +113,18 @@ From the committed snapshot of 13 November 2026 (worldwide). Reproduce with `pyt
 | barrel jeans | +83% | | mob wife aesthetic | -26% (Out, low volume) |
 | sheer dress | +72% | | adidas samba | -14% (Fading) |
 | maxi skirt | +62% | | clean girl aesthetic | -11% (Fading) |
+
+**Do the labels mean anything? Backtest.** For every term and past week with enough history, the label was recomputed from only the data known that week and checked against the year-on-year change 12 weeks later (`python scripts/backtest_labels.py`, 33 terms, 6,036 label-weeks):
+
+| Label | Weeks | Still up year on year 12 weeks later | Median year-on-year change then |
+|---|---|---|---|
+| Rising | 2,614 | 93% | +58% |
+| Peaking | 1,270 | 82% | +15% |
+| Stable | 996 | 65% | +7% |
+| Fading | 994 | 16% | -14% |
+| Out | 162 | 18% | -37% |
+
+77% of Rising labels were still up 25% or more 12 weeks later, against 44% for all weeks (1.76 times the base rate); 67% of Fading/Out labels were still down 10% or more, against 18% (3.6 times). Labels change from one week to the next 5.4% of the time. So the labels capture momentum that usually lasts a few more months. They do not predict which new item breaks out next, weekly observations of one term overlap, and the hand-picked 2026 term list flatters them. An earlier quick check that compared the next 12 weeks with the previous 12 suggested the labels were a coin flip; that comparison mixed seasons (autumn vs winter), which the year-on-year version removes.
 
 **The second signal disagrees more often than it agrees.** Wikipedia views point the same way as Google searches for only 5 of the 13 terms with both signals (for example *adidas samba*: Google -14%, Wikipedia -42%; *skinny jeans*: Google +38%, Wikipedia -26%). Encyclopaedia readers and shoppers are different audiences, so the site shows the Wikipedia figure beside each label instead of mixing it into the label.
 
@@ -139,13 +153,16 @@ Against last season (Spring/Summer 2026), the palette swapped beige, burgundy, p
 ```bash
 pip install -r requirements.txt
 python app.py                        # http://localhost:5004, reads the committed snapshot
-python -m pytest                     # tests
+python -m pytest                     # 45 tests, no network needed
 ```
 
-Refresh the data (takes 10 to 20 minutes because of rate limits; re-run if some terms come back empty):
+Settings are environment variables; see `.env.example`. Without `SECRET_KEY` the app creates one once in `instance/secret_key` (git-ignored), so wardrobes survive restarts.
+
+Refresh the data (takes 10 to 20 minutes because of rate limits; re-run if some terms come back empty, and set `TRENDS_PAUSE=15` or more if Google keeps refusing):
 
 ```bash
-python scripts/refresh_trends.py     # writes data/snapshots/<today>.json
+python scripts/refresh_trends.py     # draft while running, publishes data/snapshots/<today>.json at the end
+python scripts/backtest_labels.py    # re-runs the label backtest, writes data/backtest.json
 python scripts/summarise.py          # prints the tables in this README
 python scripts/build_palettes.py     # re-reads the Pantone reports into data/palettes.json
 ```
@@ -170,6 +187,9 @@ Edit `data/terms.json` to track different terms.
 | Pantone colour names aren't searched | Nearest everyday colour word by CIELAB distance; the distance is kept so poor matches are visible |
 | Short spikes shared by unrelated terms (mid-February 2026) | Labels use 12-week means, so one odd week can't decide a label; noted on the site |
 | pytrends' retry option breaks on urllib3 2 | Own retry loop with exponential back-off |
+| A half-finished refresh replaced good data on the site (the app read the newest file, even with 2 of 33 terms) | Draft then publish; misses carried forward and dated |
+| A new random secret key on every start orphaned every reader's wardrobe | Key from `SECRET_KEY` or generated once into `instance/` |
+| "Is a label worth anything?" was untested | Backtest against base rates, year on year so seasons don't distort it |
 
 ## Roadmap
 
@@ -177,7 +197,9 @@ Edit `data/terms.json` to track different terms.
 - A scheduled weekly refresh (GitHub Actions) that commits the new snapshot.
 - Reddit mentions as a third signal for users who add their own API key.
 - The social side of the original idea: a feed where people post outfits and react, on top of the existing SQLite store. The original virtual pet is retired.
-- Backtesting the labels: did terms labelled Rising a year ago keep rising?
+- A Fashion Dictionary: terms with IDs, aliases, definitions and a category tree in SQLite, replacing the 36-string list, plus Emerging, smoothing and confidence labels tuned with the backtest.
+- Brand Watch: brand search interest, Wikipedia and news attention, with group-level company financials kept separate.
+- A news desk from GDELT and permitted RSS feeds, deduplicated and tagged by brand.
 
 ## Author
 

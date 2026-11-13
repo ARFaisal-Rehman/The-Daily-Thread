@@ -4,6 +4,7 @@ Run:  python app.py   ->  http://localhost:5004
 """
 from __future__ import annotations
 
+import json
 import os
 import secrets
 import sqlite3
@@ -59,6 +60,7 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
     app.config["SECRET_KEY"] = secret_key(app.instance_path)
     app.config["DB"] = db_path or str(ROOT / "data" / "thread.db")
     app.config["SNAPSHOTS"] = snapshots or ROOT / "data" / "snapshots"
+    app.config["BACKTEST"] = ROOT / "data" / "backtest.json"
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.jinja_env.filters["pct"] = lambda v: "n/a" if v is None else f"{v:+.0%}".replace("-", "−")
     app.jinja_env.filters["nice_date"] = nice_date
@@ -135,7 +137,9 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         r = get_radar(app.config["SNAPSHOTS"])
         run = r.snap.get("run") if r else None
         failed = sorted((tag.split(":", 1) + [why] for tag, why in (run or {}).get("failed", {}).items()))
-        return render_template("method.html", run=run, failed=failed, version=METHODOLOGY_VERSION)
+        bt_path = Path(app.config["BACKTEST"])
+        backtest = json.loads(bt_path.read_text(encoding="utf-8")) if bt_path.exists() else None
+        return render_template("method.html", run=run, failed=failed, version=METHODOLOGY_VERSION, bt=backtest)
 
     # --------------------------------------------------------------- wardrobe
     @app.route("/wardrobe", methods=["GET", "POST"])

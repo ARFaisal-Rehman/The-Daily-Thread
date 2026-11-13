@@ -35,6 +35,24 @@
   <h2>Colours</h2>
   <p>Nobody searches for &ldquo;Arabian Spice&rdquo;. Each Pantone colour is matched to the nearest of about forty everyday colour words (&ldquo;rust&rdquo;, &ldquo;sage green&rdquo;) by distance in CIELAB, a colour space built to match human perception. Search interest for &ldquo;&lt;word&gt; outfit&rdquo; during the season is compared with the same dates a year earlier. The palette summary uses HSL lightness and saturation; a colour counts as neutral below 12% saturation and as warm when its hue sits in the reds, oranges and yellows.</p>
 
+  <h2 id="backtest">Do the labels mean anything? A backtest</h2>
+  {% if bt %}
+  <p>For every term and every past week with enough history, the label was recomputed using only the data available that week, then checked against the year-on-year change {{ bt.horizon_weeks }} weeks later. Comparing year on year keeps seasons out of the answer. {{ bt.terms }} terms, {{ "{:,}".format(bt.observations) }} label-weeks, snapshot of {{ bt.snapshot|nice_date }}.</p>
+  <table class="signals">
+    <caption>What happened {{ bt.horizon_weeks }} weeks after each label</caption>
+    <thead><tr><th scope="col">Label</th><th scope="col">Weeks</th><th scope="col">Still up year on year</th><th scope="col">Median year on year then</th></tr></thead>
+    <tbody>{% for lab, s in bt.labels.items() %}<tr><th scope="row"><span class="tag tag-{{ lab|lower }}">{{ lab }}</span></th><td>{{ "{:,}".format(s.n) }}</td><td>{{ "{:.0%}".format(s.still_up_share) }}</td><td>{{ s.median_future_yoy|pct }}</td></tr>{% endfor %}</tbody>
+  </table>
+  <ul>
+    <li><strong>Rising holds.</strong> {{ "{:.0%}".format(bt.rising_precision) }} of Rising labels were still up 25% or more {{ bt.horizon_weeks }} weeks later, against {{ "{:.0%}".format(bt.base_rate_rising) }} for all weeks: {{ bt.rising_lift }} times the base rate.</li>
+    <li><strong>Fading and Out hold.</strong> {{ "{:.0%}".format(bt.falling_precision) }} were still down 10% or more, against {{ "{:.0%}".format(bt.base_rate_falling) }}: {{ bt.falling_lift }} times the base rate.</li>
+    <li><strong>Labels are stable.</strong> A term's label changes from one week to the next {{ "{:.1%}".format(bt.flip_rate) }} of the time.</li>
+  </ul>
+  <p><strong>What this does not show.</strong> The labels capture momentum that usually lasts a few more months; they do not predict which new item will break out next. Weekly observations of the same term overlap, so they are not independent, and the term list was chosen in 2026 with hindsight, which flatters how often terms keep rising.</p>
+  {% else %}
+  <p>No backtest has been run on this snapshot yet. Run <code>python scripts/backtest_labels.py</code>.</p>
+  {% endif %}
+
   <h2 id="last-refresh">The last refresh</h2>
   {% if run %}
   <p>Methodology version {{ run.methodology_version }}. The refresh ran from {{ run.started[:16]|replace('T', ' ') }} to {{ (run.finished or run.started)[:16]|replace('T', ' ') }} UTC: {{ run.ok }} of {{ run.attempted }} series fetched. Anything not fetched was kept from the previous snapshot and is marked with its date wherever it appears.</p>

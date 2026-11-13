@@ -1,0 +1,44 @@
+{
+ "methodology_version": "1.0",
+ "horizon_weeks": 12,
+ "terms": 33,
+ "skipped": [],
+ "observations": 6036,
+ "labels": {
+  "Rising": {
+   "n": 2614,
+   "still_up_share": 0.931,
+   "median_future_yoy": 0.577
+  },
+  "Peaking": {
+   "n": 1270,
+   "still_up_share": 0.824,
+   "median_future_yoy": 0.146
+  },
+  "Stable": {
+   "n": 996,
+   "still_up_share": 0.653,
+   "median_future_yoy": 0.07
+  },
+  "Fading": {
+   "n": 994,
+   "still_up_share": 0.155,
+   "median_future_yoy": -0.141
+  },
+  "Out": {
+   "n": 162,
+   "still_up_share": 0.179,
+   "median_future_yoy": -0.372
+  }
+ },
+ "base_rate_up": 0.714,
+ "rising_precision": 0.769,
+ "base_rate_rising": 0.438,
+ "falling_precision": 0.668,
+ "base_rate_falling": 0.185,
+ "flip_rate": 0.054,
+ "rising_lift": 1.76,
+ "falling_lift": 3.61,
+ "snapshot": "2026-11-13",
+ "generated": "2026-11-13"
+}
