@@ -172,3 +172,9 @@ figcaption, .source, .note { font-size: .85rem; color: var(--muted); }
   .columns > section { padding: 0; border-left: 0; margin-bottom: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Proposed dictionary terms: compact, clearly secondary to reviewed entries */
+.dict-group summary { cursor: pointer; }
+.dict-group summary h2 { display: inline; }
+.proposed-list { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; }
+.proposed-list .tag { font-size: .7rem; }

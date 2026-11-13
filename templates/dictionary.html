@@ -15,7 +15,7 @@
   <button class="button" type="submit">Search</button>
   {% if q %}<a href="{{ url_for('dictionary') }}">Clear</a>{% endif %}
 </form>
-<p class="coverage">{{ count }} term{{ '' if count == 1 else 's' }}{% if q %} matching &ldquo;{{ q }}&rdquo;{% endif %}.</p>
+<p class="coverage">{{ count }} reviewed term{{ '' if count == 1 else 's' }} and {{ proposed_count }} proposed{% if q %} matching &ldquo;{{ q }}&rdquo;{% endif %}.</p>
 
 {% for heading, terms in groups.items() %}
 <section class="block dict-group">
@@ -29,7 +29,24 @@
     {% endfor %}
   </dl>
 </section>
-{% else %}
-<p class="empty">No term matches &ldquo;{{ q }}&rdquo;. Try a broader word such as &ldquo;jeans&rdquo; or &ldquo;boots&rdquo;.</p>
 {% endfor %}
+
+{% if proposed %}
+<section class="block dict-group">
+  <details{% if q %} open{% endif %}>
+    <summary><h2>Proposed terms awaiting review ({{ proposed_count }})</h2></summary>
+    <p class="meta">Candidate words not yet on the radar: no definition and no search data until an editor reviews them. Names from the <a href="https://fashionpedia.github.io/home/">Fashionpedia</a> ontology (Jia et al., 2020), used under CC BY 4.0.</p>
+    {% for heading, terms in proposed.items() %}
+    <h3>{{ heading }}</h3>
+    <ul class="proposed-list">
+      {% for t in terms %}<li id="{{ t.slug }}">{{ t.name }}{% if t.aliases %} <span class="meta-inline">or {{ t.aliases|join(', ') }}</span>{% endif %} <span class="tag tag-stable">proposed</span></li>{% endfor %}
+    </ul>
+    {% endfor %}
+  </details>
+</section>
+{% endif %}
+
+{% if not groups and not proposed %}
+<p class="empty">No term matches &ldquo;{{ q }}&rdquo;. Try a broader word such as &ldquo;jeans&rdquo; or &ldquo;boots&rdquo;.</p>
+{% endif %}
 {% endblock %}

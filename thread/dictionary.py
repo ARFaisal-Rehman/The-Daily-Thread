@@ -4,6 +4,10 @@ data/dictionary.json is the source of truth. It is curated by hand and kept in g
 reviewable; load() validates it and refuses to run on a broken file. Each term's 'query' is the
 Google Trends search phrase and the key its series is stored under in a snapshot, so renaming a
 term's display name never breaks its history.
+
+data/dictionary_proposed.json holds candidate terms imported from outside vocabularies
+(scripts/import_fashionpedia.py). They are searchable but not tracked, and need no definition. To
+promote one, move it into dictionary.json, write a definition and set status to active.
 """
 from __future__ import annotations
 
@@ -14,6 +18,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 PATH = Path(__file__).resolve().parents[1] / "data" / "dictionary.json"
+PROPOSED = PATH.with_name("dictionary_proposed.json")
 STATUSES = {"proposed", "active", "deprecated", "merged"}
 
 
@@ -81,9 +86,13 @@ class Dictionary:
                  "category_id": t.category, "wiki": t.wiki} for t in self.terms if t.status == "active"]
 
 
-def load(path: Path = PATH) -> Dictionary:
+def load(path: Path = PATH, proposed_path: Optional[Path] = PROPOSED) -> Dictionary:
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     defaults = raw.get("defaults", {})
+    entries = [(e, False) for e in raw["terms"]]
+    if proposed_path and Path(proposed_path).exists():
+        extra = json.loads(Path(proposed_path).read_text(encoding="utf-8"))
+        entries += [(e, True) for e in extra["terms"]]
     categories = {c["id"]: c for c in raw["categories"]}
     problems: List[str] = []
     for c in raw["categories"]:
@@ -91,9 +100,11 @@ def load(path: Path = PATH) -> Dictionary:
             problems.append(f"category {c['id']}: unknown parent {c['parent']}")
 
     terms, seen_ids, seen_slugs, seen_names = [], set(), set(), {}
-    for entry in raw["terms"]:
+    for entry, from_proposed in entries:
         t = Term(**{**defaults, **entry})
         where = f"term {t.id} ({t.name})"
+        if from_proposed and t.status != "proposed":
+            problems.append(f"{where}: {Path(proposed_path).name} may hold only proposed terms")
         if t.id in seen_ids:
             problems.append(f"{where}: duplicate id")
         if t.slug in seen_slugs:

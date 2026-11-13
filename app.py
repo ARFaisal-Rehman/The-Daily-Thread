@@ -138,12 +138,18 @@ def create_app(db_path: str | None = None, snapshots: Path | None = None, instan
         r = radar()
         d = r.dictionary
         q = request.args.get("q", "").strip()[:60]
-        terms = [t for t in (d.search(q) if q else d.terms) if t.status == "active"]
+        found = d.search(q) if q else d.terms
         order = list(d.categories)
-        groups: dict = {}
-        for t in sorted(terms, key=lambda t: (order.index(t.category), t.name)):
-            groups.setdefault(" / ".join(d.path(t.category)), []).append(t)
-        return render_template("dictionary.html", groups=groups, q=q, count=len(terms),
+
+        def grouped(status: str) -> dict:
+            groups: dict = {}
+            for t in sorted((t for t in found if t.status == status), key=lambda t: (order.index(t.category), t.name)):
+                groups.setdefault(" / ".join(d.path(t.category)), []).append(t)
+            return groups
+
+        groups, proposed = grouped("active"), grouped("proposed")
+        return render_template("dictionary.html", groups=groups, proposed=proposed, q=q,
+                               count=sum(map(len, groups.values())), proposed_count=sum(map(len, proposed.values())),
                                radar={i["slug"]: i for i in r.items})
 
     @app.route("/colours")

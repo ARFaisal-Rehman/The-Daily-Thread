@@ -9,7 +9,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from thread.dictionary import load  # noqa: E402
+from thread.dictionary import PROPOSED, load  # noqa: E402
 
 DICT = ROOT / "data" / "dictionary.json"
 OLD_SLUGS = {  # the 36 trend-page URLs from before the dictionary; they must keep working
@@ -37,8 +37,8 @@ def test_all_36_terms_migrated_with_their_urls(d):
 
 
 def test_every_term_is_complete(d):
-    for t in d.terms:
-        assert re.fullmatch(r"dt-\d{3}", t.id)
+    for t in [t for t in d.terms if t.status == "active"]:
+        assert re.fullmatch(r"(dt|fp)-\d{3}", t.id)
         assert t.definition and t.definition.endswith(".")
         assert t.category in d.categories
         assert all(r in d.by_id for r in t.related)
@@ -80,3 +80,27 @@ def test_validation_rejects_broken_entries(tmp_path, mutate, message):
     bad.write_text(json.dumps(r), encoding="utf-8")
     with pytest.raises(ValueError, match=message):
         load(bad)
+
+
+def test_proposed_terms_are_loaded_but_not_tracked(d):
+    proposed = [t for t in d.terms if t.status == "proposed"]
+    assert len(proposed) > 200
+    assert all(re.fullmatch(r"fp-\d{3}", t.id) for t in proposed)
+    assert all(t.sources[0]["type"] == "fashionpedia" for t in proposed)
+    assert d.find("polo shirt").status == "proposed"
+    assert "polo-shirt" not in {t["slug"] for t in d.tracked()}
+
+
+def test_proposed_file_holds_only_proposed_terms(tmp_path):
+    r = json.loads(PROPOSED.read_text(encoding="utf-8"))
+    r["terms"][0]["status"] = "active"
+    bad = tmp_path / "proposed.json"
+    bad.write_text(json.dumps(r), encoding="utf-8")
+    with pytest.raises(ValueError, match="only proposed"):
+        load(DICT, bad)
+
+
+def test_top_level_categories_cross_reference_google_taxonomy(d):
+    assert d.categories["clothing"]["google_taxonomy"] == 1604
+    assert d.categories["footwear"]["google_taxonomy"] == 187
+    assert d.categories["jewellery"]["google_taxonomy"] == 188

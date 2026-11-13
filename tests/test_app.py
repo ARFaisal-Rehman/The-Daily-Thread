@@ -107,7 +107,7 @@ def test_dictionary_page_lists_terms_by_category(client):
 
 def test_dictionary_search_finds_aliases(client):
     html = client.get("/dictionary?q=stealth+wealth").get_data(as_text=True)
-    assert "Quiet luxury" in html and "1 term" in html
+    assert "Quiet luxury" in html and "1 reviewed term and 0 proposed" in html
 
 
 def test_trend_page_shows_the_dictionary_entry(client):
@@ -153,3 +153,17 @@ def test_mindful_score_uses_the_radar():
     assert mindful_score(form, rising, 0)["verdict"] == "Probably skip"
     good = {"wears": "8", "pairs": "yes", "gap": "yes", "hype": "no"}
     assert mindful_score(good, {"label": "Stable", "term": "trench coat"}, 0)["verdict"] == "Mindful buy"
+
+
+def test_dictionary_page_lists_proposed_terms_separately_with_credit(client):
+    html = client.get("/dictionary").get_data(as_text=True)
+    assert "awaiting review" in html
+    assert "Polo shirt" in html and 'href="/trend/polo-shirt"' not in html
+    assert "Fashionpedia" in html and "CC BY 4.0" in html
+    active_part = html.split("awaiting review")[0]
+    assert "Polo shirt" not in active_part                                   # not mixed in with reviewed terms
+
+
+def test_dictionary_search_includes_proposed_terms(client):
+    html = client.get("/dictionary?q=batwing").get_data(as_text=True)
+    assert "Dolman sleeve" in html and "proposed" in html
