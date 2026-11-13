@@ -195,3 +195,5 @@ figcaption, .source, .note { font-size: .85rem; color: var(--muted); }
 /* Edition */
 .edition-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
 @media (min-width: 900px) { .edition-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.brand-table td { text-align: left; }
+.brand-table td.num { text-align: right; }
